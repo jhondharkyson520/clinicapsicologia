@@ -8,8 +8,11 @@ class ListClientService{
                 name: true,
                 email: true,
                 telefone: true,
-                vencimento: true,
-                mensalidade: true
+                dataVencimento: true,
+                tipoPlano: true,
+                valorPlano: true,
+                quantidadeSessoes: true,
+                situacao: true
             }
         })
 

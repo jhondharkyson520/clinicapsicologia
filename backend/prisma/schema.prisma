@@ -32,8 +32,12 @@ model Clients {
   cpf String
   telefone String
   endereco String
-  mensalidade String
-  vencimento DateTime
+  tipoPlano String
+  planoFamiliar String?
+  dataVencimento DateTime?
+  valorPlano Decimal
+  quantidadeSessoes Int?
+  sessoesContador Int?
   situacao Boolean @default(false)
   
   created_at DateTime? @default(now())
@@ -41,12 +45,14 @@ model Clients {
 
   @@map("clients")
   agenda Agenda[]
+  caixa Caixa[]
 }
 
 model Agenda{
   id String @id @default(uuid())
   dataConsulta DateTime
   horarioConsulta DateTime
+  sessoesContador Int
   
   created_at DateTime? @default(now())
   updated_at DateTime? @default(now())
@@ -54,5 +60,20 @@ model Agenda{
   client Clients @relation(fields: [client_id], references: [id])
 
   @@map("agenda")
+  client_id String
+}
+
+model Caixa {
+  id String    @id @default(uuid())
+  valorPlano Decimal
+  valorAberto  Decimal
+  valorPago   Decimal
+  dataOperacao   DateTime
+
+  created_at DateTime? @default(now())
+  updated_at DateTime? @default(now())
+
+  client Clients @relation(fields: [client_id], references: [id])
+  @@map("caixa")
   client_id String
 }
