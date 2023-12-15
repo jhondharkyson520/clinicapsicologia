@@ -9,13 +9,15 @@ class ListCaixaService {
         dataOperacao: true,
         valorPlano: true,
         valorAberto: true,
-        valorPago: true,
         client:{
           select:{
             name: true,
           }
         }
       },
+      orderBy: {
+        dataOperacao: 'desc'
+      }
     });
 
     return caixa.map((caixa) => ({
@@ -23,7 +25,6 @@ class ListCaixaService {
       dataOperacao: format(new Date(caixa.dataOperacao), 'dd/MM/yyyy'),      
       valorPlano: caixa.valorPlano,
       valorAberto: caixa.valorAberto,
-      valorPago: caixa.valorPago,
       client: {
         name: caixa.client.name,
       },

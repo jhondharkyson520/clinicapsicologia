@@ -11,6 +11,9 @@ import { CreateAgendaController } from './controllers/agenda/CreateAgendaControl
 import { ListAgendaController } from './controllers/agenda/ListAgendaController';
 import { CreateCaixaController } from './controllers/caixa/CreateCaixaController';
 import { ListCaixaController } from './controllers/caixa/ListCaixaController';
+import { ListNameCaixaController } from './controllers/caixa/ListNameCaixaController';
+import { ListRelatorioController } from './controllers/caixa/ListRelatorioController';
+import { ListProximaController } from './controllers/agenda/ListProximaController';
 
 
 const router = Router();
@@ -22,8 +25,11 @@ router.post('/client', isAuthenticated, new CreateClientController().handle);
 router.get('/clientlist', isAuthenticated, new ListClientController().handle);
 router.post('/agenda', isAuthenticated, new CreateAgendaController().handle);
 router.get('/agendalist', isAuthenticated, new ListAgendaController().handle);
+router.get('/agenda/proximas', isAuthenticated, new ListProximaController().handle);
 router.post('/lancamento', isAuthenticated, new CreateCaixaController().handle);
 router.get('/caixalist', isAuthenticated, new ListCaixaController().handle);
+router.get('/caixa/name', isAuthenticated, new ListNameCaixaController().handle);
+router.get('/caixa/relatorio', isAuthenticated, new ListRelatorioController().handle);
 
 
 export {router};

@@ -67,7 +67,6 @@ model Caixa {
   id String    @id @default(uuid())
   valorPlano Decimal
   valorAberto  Decimal
-  valorPago   Decimal
   dataOperacao   DateTime
 
   created_at DateTime? @default(now())
