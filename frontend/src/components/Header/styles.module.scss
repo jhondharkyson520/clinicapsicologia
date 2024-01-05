@@ -1,0 +1,156 @@
+// styles.module.scss
+
+.headerContainer {
+    height: 5rem;
+  }
+  
+  .headerContent {
+    max-width: 1120px;
+    height: 5rem;
+    margin: 0 auto;
+    padding: 0 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  
+    img {
+      cursor: pointer;
+    }
+
+    @media screen and (max-width: 768px) {
+        display: none;
+        
+      }
+
+
+  }
+  
+  .menuNav {
+    display: flex;
+    align-items: center;
+  
+    .a {
+      color: var(--black);
+      padding: 0 0.5rem;
+      display: inline-block;
+      position: relative;
+      transition: color 0.7s;
+  
+      & + .a {
+        margin-left: 2rem;
+      }
+  
+      &:hover {
+        color: var(--red-900);
+        transition: transform 0.8s;
+        transform: scale(1.09);
+      }
+    }
+  
+    button {
+      margin-left: 2rem;
+      background: transparent;
+      border: 0;
+      transition: transform 0.7s;
+  
+      &:hover {
+        transform: scale(1.2);
+      }
+    }
+  }
+  
+  .menu {
+    display: none;
+  
+    @media screen and (max-width: 768px) {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      height: 90px;
+    }
+  }
+  
+  .list {
+    display: none;
+  
+    @media screen and (max-width: 768px) {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      list-style: none;
+      background-color: var(--white-fundo);
+      overflow: hidden;
+      position: fixed; 
+      top: 0;
+      left: 0; 
+      width: 100%; 
+      height: 100%; 
+    }
+  }
+  
+  .line {
+    width: 90%;
+    height: 0;
+    border-top: 1px solid #fff;
+    margin-left: 35px;
+    margin-right: 15px;
+    margin-top: 30px;
+  }
+  
+  .lineLi {
+    margin-top: 30px;
+  }
+  
+  .buttonBar {
+    margin-right: 45px;
+    margin-left: 60px;
+    padding: 15px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .iconBars:hover {
+    color: var(--red-900);
+    cursor: pointer;
+  }
+  
+  .buttonTimes {
+    padding: 5px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    margin-left: 88%;
+    margin-top: 10px;
+    border-radius: 50%;
+    font-size: 150%;
+  }
+  
+  .buttonTimes:hover {
+    border: none;
+    cursor: pointer;
+  }
+  
+  .iconTimes:hover {
+    color: var(--red-900);
+    cursor: pointer;
+  }
+  
+  .buttonH {
+    margin-left: 70px;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    justify-content: center;
+    color: var(--black);
+    font-weight: bold;
+    text-decoration: none;
+    font-size: 20px;
+  
+    &:hover {
+      color: var(--red-900);
+      cursor: pointer;
+    }
+  }
+  

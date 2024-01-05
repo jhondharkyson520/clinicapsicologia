@@ -1,5 +1,3 @@
-// ListProximaController.ts
-
 import { Request, Response } from 'express';
 import { ListProximaService } from '../../services/agenda/ListProximaService';
 

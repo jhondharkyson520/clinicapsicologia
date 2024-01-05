@@ -1,5 +1,4 @@
 import prismaClient from '../../prisma';
-import { format, parseISO } from 'date-fns';
 
 interface Agenda {
   id: string;
@@ -34,15 +33,13 @@ class ListAgendaService {
         throw new Error('Invalid date or time value');
       }
 
-      // Converter data para "dd/MM/yyyy"
       const dataFormatada = new Date(agenda.dataConsulta).toLocaleDateString('pt-BR');
 
-      // Converter hora para "HH:mm"
       const horaFormatada = new Date(agenda.horarioConsulta).toLocaleTimeString('pt-BR', {
         hour: '2-digit',
         minute: '2-digit',
         hour12: false,
-        timeZone: 'UTC', // Adicionando timezone UTC
+        timeZone: 'UTC', 
       });
 
       return {

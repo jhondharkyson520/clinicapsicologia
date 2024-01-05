@@ -15,6 +15,9 @@ import { ListNameCaixaController } from './controllers/caixa/ListNameCaixaContro
 import { ListRelatorioController } from './controllers/caixa/ListRelatorioController';
 import { ListProximaController } from './controllers/agenda/ListProximaController';
 import { UpdateClientController } from './controllers/client/UpdateClientController';
+import { DeleteClientController } from './controllers/client/DeleteClientController';
+import { DeleteAgendaController } from './controllers/agenda/DeleteAgendaController';
+import { ListAtrasadosController } from './controllers/caixa/ListAtrasadosController';
 
 
 const router = Router();
@@ -22,14 +25,20 @@ const router = Router();
 router.post('/users', new CreateUserController().handle);
 router.post('/session', new AuthUserController().handle);
 router.get('/me', isAuthenticated, new DetailUserController().handle);
+
 router.post('/client', isAuthenticated, new CreateClientController().handle);
 router.get('/clientlist', isAuthenticated, new ListClientController().handle);
-router.post('/client/update', isAuthenticated, new UpdateClientController().handle); 
+router.post('/client/update', isAuthenticated, new UpdateClientController().handle);
+router.delete('/client/:id', isAuthenticated, new DeleteClientController().handle);
+
 router.post('/agenda', isAuthenticated, new CreateAgendaController().handle);
 router.get('/agendalist', isAuthenticated, new ListAgendaController().handle);
 router.get('/agenda/proximas', isAuthenticated, new ListProximaController().handle);
+router.delete('/agenda/:id', isAuthenticated, new DeleteAgendaController().handle);
+
 router.post('/lancamento', isAuthenticated, new CreateCaixaController().handle);
 router.get('/caixalist', isAuthenticated, new ListCaixaController().handle);
+router.get('/caixa/atrasados', isAuthenticated, new ListAtrasadosController().handle);
 router.get('/caixa/name', isAuthenticated, new ListNameCaixaController().handle);
 router.get('/caixa/relatorio', isAuthenticated, new ListRelatorioController().handle);
 

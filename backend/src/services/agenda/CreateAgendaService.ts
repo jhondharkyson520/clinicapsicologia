@@ -1,4 +1,6 @@
+import { DateTime } from 'luxon';
 import prismaClient from '../../prisma';
+
 
 interface AgendaRequest {
   dataConsulta: string;
@@ -13,6 +15,37 @@ class CreateAgendaService {
     }
 
     try {
+      
+      const dataHoraLuxon = DateTime.fromFormat(`${dataConsulta} ${horarioConsulta}`, 'dd/MM/yyyy HH:mm', { zone: 'UTC' });
+
+      const horaAtual = DateTime.now();
+      
+     console.log(dataHoraLuxon);
+     console.log(horaAtual);
+      
+
+    
+     if(dataHoraLuxon <= horaAtual)
+     {
+      console.log('não é possivel fazer agendamentos passados');      
+      return;
+     }
+
+
+      
+      const agendamentoExistente = await prismaClient.agenda.findFirst({
+        where: {
+          AND: [
+            { dataConsulta: dataHoraLuxon.toISO() },
+            { horarioConsulta: dataHoraLuxon.toISO() },
+          ],
+        },
+      });
+
+      if (agendamentoExistente) {
+        throw new Error('Já existe um agendamento para a mesma data e horário.');
+      }
+
       const client = await prismaClient.clients.findUnique({
         where: { id: client_id },
       });
@@ -25,8 +58,8 @@ class CreateAgendaService {
 
       const agenda = await prismaClient.agenda.create({
         data: {
-          dataConsulta: new Date(`${dataConsulta}T${horarioConsulta}:00.000Z`),
-          horarioConsulta: new Date(`${dataConsulta}T${horarioConsulta}:00.000Z`),
+          dataConsulta: dataHoraLuxon.toISO(),
+          horarioConsulta: dataHoraLuxon.toISO(),
           client: {
             connect: {
               id: client_id,
@@ -36,7 +69,7 @@ class CreateAgendaService {
         },
       });
 
-      // Atualize a situação do cliente se a quantidadeSessoes não for null
+     
       if (client.quantidadeSessoes !== null && novaSessaoContador === client.quantidadeSessoes) {
         await prismaClient.clients.update({
           where: { id: client_id },
@@ -44,7 +77,7 @@ class CreateAgendaService {
         });
       }
 
-      // Atualize o sessoesContador do cliente
+     
       await prismaClient.clients.update({
         where: { id: client_id },
         data: { sessoesContador: novaSessaoContador },

@@ -1,4 +1,5 @@
 import prismaClient from "../../prisma";
+import { DateTime } from "luxon"; 
 
 interface ClientRequest {
   name: string;
@@ -8,7 +9,7 @@ interface ClientRequest {
   endereco: string;
   tipoPlano: string;
   planoFamiliar?: string | null;
-  dataVencimento?: Date | null;
+  dataVencimento?: string | null;
   valorPlano: number;
   quantidadeSessoes?: number | null;
   situacao: boolean;
@@ -41,6 +42,9 @@ class CreateClientService {
       throw new Error("Preencha todos os campos!");
     }
 
+    const formattedDataVencimento =
+      dataVencimento && DateTime.fromFormat(dataVencimento, "dd/MM/yyyy").toISO();
+
     const client = await prismaClient.clients.create({
       data: {
         name: name,
@@ -51,7 +55,7 @@ class CreateClientService {
         tipoPlano: tipoPlano,
         valorPlano: valorPlano,
         planoFamiliar: planoFamiliar || null,
-        dataVencimento: dataVencimento || null,
+        dataVencimento: formattedDataVencimento || null,
         quantidadeSessoes: quantidadeSessoes || null,
         situacao: situacao,
       },
@@ -64,8 +68,6 @@ class CreateClientService {
         situacao: true,
       },
     });
-
-    
 
     return client;
   }
