@@ -29,6 +29,8 @@ class CreateClientService {
     quantidadeSessoes,
     situacao,
   }: ClientRequest) {
+    console.log('dataVencimento (Backend - Início):', dataVencimento);
+
     if (
       name === "" ||
       email === "" ||
@@ -37,13 +39,14 @@ class CreateClientService {
       endereco === "" ||
       tipoPlano === "" ||
       valorPlano === null ||
-      situacao === null
+      situacao === undefined
     ) {
       throw new Error("Preencha todos os campos!");
     }
 
     const formattedDataVencimento =
-      dataVencimento && DateTime.fromFormat(dataVencimento, "dd/MM/yyyy").toISO();
+      dataVencimento;
+
 
     const client = await prismaClient.clients.create({
       data: {
@@ -68,6 +71,8 @@ class CreateClientService {
         situacao: true,
       },
     });
+
+    console.log('dataVencimento:', formattedDataVencimento);
 
     return client;
   }
