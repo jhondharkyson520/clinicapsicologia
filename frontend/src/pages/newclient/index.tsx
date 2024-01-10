@@ -2,12 +2,19 @@ import Head from "next/head";
 import { Header } from "@/components/Header";
 import styles from './styles.module.scss';
 import { canSSRAuth } from "@/utils/canSSRAuth";
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import { setupAPIClient } from "@/services/api";
 import InputMask from 'react-input-mask';
 import { DateTime } from 'luxon';
+import * as NumberFormat from 'react-number-format';
 
+
+interface InputMoneyProps {
+    value: string;
+    onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+    placeholder: string;
+  }
 
 export default function NewClient(){
 
@@ -18,6 +25,7 @@ export default function NewClient(){
     const [endereco, setEndereco] = useState('');
     const [dataV, setDataV] = useState('');
     const [valor, setValor] = useState('');
+    const [valorMask, setValorMask] = useState('');
     const [quantidade, setQuantidade] = useState('');
     const [tipoPlano, setTipoPlano] = useState('');
     const [planoFamiliar, setPlanoFamiliar] = useState('');
@@ -25,6 +33,35 @@ export default function NewClient(){
     const [situacao, setSituacao] = useState(false);
     const [planoFamiliarDisabled, setPlanoFamiliarDisabled] = useState(true);
     const [dataVencimentoDisabled, setDataVencimentoDisabled] = useState(true);
+
+    const [camposFaltando, setCamposFaltando] = useState<string[]>([]);
+
+
+    const maskMoney = (value: string) => {
+      
+      const numericValue = value.replace(/\D/g, '');
+      const formattedValue = numericValue.replace(/(\d)(\d{2})$/, '$1.$2');
+      const valueWithDot = formattedValue.replace(/(?=(\d{3})+(\D))\B/g, '');
+      return `R$ ${valueWithDot}`;
+      
+    };
+  
+   const handleValorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const rawValue = e.target.value;       
+       
+ 
+        const numericValue = rawValue.replace(/[^\d,.]/g, '');  
+        const valueWithDot = numericValue.replace(/,/g, '.');
+        const formattedValueWithSymbol = maskMoney(valueWithDot);  
+        const formattedValue = formattedValueWithSymbol.substring(2);
+
+        setValor(formattedValue); 
+        setValorMask(formattedValueWithSymbol);                   
+      };
+      console.log(valor);
+      
+      
+      
 
     const handleTipoPacoteChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         setTipoPacote(e.target.value);
@@ -40,6 +77,30 @@ export default function NewClient(){
 
     async function handleRegister(event: FormEvent) {
         event.preventDefault();
+
+        const camposFaltando: string[] = [];
+
+      // Verifica campos vazios e adiciona à lista camposFaltando
+      if (name === '') camposFaltando.push('Nome');
+      if (email === '') camposFaltando.push('Email');
+      if (cpf === '') camposFaltando.push('CPF');
+      if (telefone === '') camposFaltando.push('Telefone');
+      if (endereco === '') camposFaltando.push('Endereço');
+      if (valor === '') camposFaltando.push('Valor do Plano');
+      if (quantidade === '') camposFaltando.push('Quantidade de Sessões');
+      if (tipoPlano === '') camposFaltando.push('Tipo do Plano');
+      if (tipoPacote === '') camposFaltando.push('Tipo do Pacote');
+
+      if (camposFaltando.length > 0) {
+        // Se houver campos faltando, exibe toasts de erro
+        camposFaltando.forEach((campo) => {
+          toast.error(`O campo '${campo}' é obrigatório.`);
+        });
+
+        
+        return;
+      }
+
         
         try {
           if (
@@ -85,13 +146,16 @@ export default function NewClient(){
             toast.error('Erro ao cadastrar');
           }
         }
+
+        setCamposFaltando([]);
     
         setName('');
         setEmail('');
         setCpf('');
         setTelefone('');
         setDataV('');
-        setValor('');
+        setValorMask('');
+        setEndereco('');
         setQuantidade('');
         setTipoPlano('');
         setPlanoFamiliar('');
@@ -185,13 +249,12 @@ export default function NewClient(){
                         onChange={(e) => setDataV(e.target.value)}
                         disabled={dataVencimentoDisabled}
                     />
+                    
 
-                    <InputMask 
-                        mask="R$ 9,99"
-                        maskChar={null} 
-                        placeholder="Valor plano"
-                        value={valor}
-                        onChange={(e) => setValor(e.target.value)}  
+                    <input
+                      placeholder="Valor plano"
+                      value={valorMask}
+                      onChange={handleValorChange}
                     />
 
                     <input 
