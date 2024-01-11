@@ -54,7 +54,7 @@ export function Header() {
             </li>
 
             <li className={styles.lineLi}>
-              <a className={styles.buttonH} href="/clients" onClick={closeListAndNavigate}>
+              <a className={styles.buttonH} href="/clientlist" onClick={closeListAndNavigate}>
                 Clientes
               </a>
             </li>
@@ -99,7 +99,7 @@ export function Header() {
           <Link href="/newclient" className={styles.a}>
             Cadastrar Clientes
           </Link>
-          <Link href="/clients" className={styles.a}>
+          <Link href="/clientlist" className={styles.a}>
             Clientes
           </Link>
           <Link href="/agenda" className={styles.a}>

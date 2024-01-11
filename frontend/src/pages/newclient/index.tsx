@@ -7,14 +7,8 @@ import { toast } from "react-toastify";
 import { setupAPIClient } from "@/services/api";
 import InputMask from 'react-input-mask';
 import { DateTime } from 'luxon';
-import * as NumberFormat from 'react-number-format';
 
 
-interface InputMoneyProps {
-    value: string;
-    onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-    placeholder: string;
-  }
 
 export default function NewClient(){
 
@@ -31,6 +25,7 @@ export default function NewClient(){
     const [planoFamiliar, setPlanoFamiliar] = useState('');
     const [tipoPacote, setTipoPacote] = useState('');
     const [situacao, setSituacao] = useState(false);
+
     const [planoFamiliarDisabled, setPlanoFamiliarDisabled] = useState(true);
     const [dataVencimentoDisabled, setDataVencimentoDisabled] = useState(true);
 
@@ -80,7 +75,6 @@ export default function NewClient(){
 
         const camposFaltando: string[] = [];
 
-      // Verifica campos vazios e adiciona à lista camposFaltando
       if (name === '') camposFaltando.push('Nome');
       if (email === '') camposFaltando.push('Email');
       if (cpf === '') camposFaltando.push('CPF');
@@ -92,7 +86,7 @@ export default function NewClient(){
       if (tipoPacote === '') camposFaltando.push('Tipo do Pacote');
 
       if (camposFaltando.length > 0) {
-        // Se houver campos faltando, exibe toasts de erro
+
         camposFaltando.forEach((campo) => {
           toast.error(`O campo '${campo}' é obrigatório.`);
         });
@@ -103,17 +97,8 @@ export default function NewClient(){
 
         
         try {
-          if (
-            name === '' || email === '' || cpf === '' || telefone === '' ||
-            endereco === '' || valor === '' || quantidade === '' ||
-            tipoPlano === '' || tipoPacote === ''
-          ) {
-            toast.error('Preencha todos os campos!');
-            return;
-          }
-          
-          const formattedDataVencimento = dataV && DateTime.fromFormat(dataV, 'dd/MM/yyyy').toISO();
-    
+                    
+          const formattedDataVencimento = dataV && DateTime.fromFormat(dataV, 'dd/MM/yyyy').toISO();    
           const data = new FormData();
     
           if (formattedDataVencimento && tipoPacote === 'Mensal') {
