@@ -70,6 +70,7 @@
     border-collapse: collapse;
     align-items: center;
     justify-content: center;
+    
   
 }
 
@@ -131,22 +132,38 @@
 
 
   
-  @media screen and (max-width: 767px) {
-    .orderClient {
-      height: 150px;
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-      
+@media screen and (max-width: 767px) {
+  .listClients{
+    display: flex;    
+    font-size: 15px;
+    
+    thead{
+      display: none;
     }
-
-    .tag {
-        display: none;
-      }
+  }
+  .orderClient{     
+      width: 450px;
+      font-size: 12px;
+      
+      
   }
 
+  .disableCell{
+    display: none;
+  }
+
+}
+
+.disableCell {
+  
+  vertical-align: middle;
+  border: 1px solid transparent;
+  text-align: center;
+  justify-content: center;
+  padding: 0 1rem 0 0;
+  align-items: center;
+  
+}
 
   .tagCell, .tableCell {
     display: table-cell;

@@ -94,9 +94,9 @@ export default function ClientList({ clients }: ClientProps) {
                                 <th className={styles.tagCell}></th>
                                 <th className={styles.tableCell}>Nome</th>
                                 <th className={styles.tableCell}>Vencimento</th>
-                                <th className={styles.tableCell}>Telefone</th>
+                                    <th className={styles.tableCell}>Telefone</th>
                                 <th className={styles.tableCell}>Sessões</th>
-                                <th className={styles.tableCell}>Valor Plano</th>
+                                    <th className={styles.tableCell}>Valor Plano</th>
                                 <th className={styles.tableCell}>Situação</th>
                                 <th className={styles.tableCell}>Ações</th>
                             </tr>
@@ -122,9 +122,16 @@ export default function ClientList({ clients }: ClientProps) {
                                                 <p style={{color: '#F13D49' }}>Plano por Sessões</p>
                                             )}
                                         </td>
-                                        <td>{client.telefone}</td>
-                                        <td>{client.quantidadeSessoes}</td>
-                                        <td>R${client.valorPlano}</td>
+                                        <td className={styles.disableCell}>{client.telefone}</td>
+                                        <td className={styles.tableCell} >
+                                            {client.quantidadeSessoes ? 
+                                                (client.quantidadeSessoes)
+                                             : (
+                                                
+                                                <p style={{color: '#F13D49' }}>Plano mensal</p>
+                                            )}
+                                        </td>
+                                        <td className={styles.disableCell}>R${client.valorPlano}</td>
                                         <td>
                                             {client.situacao ? (
                                                 <span className={styles.pagoText}>Pago</span>
