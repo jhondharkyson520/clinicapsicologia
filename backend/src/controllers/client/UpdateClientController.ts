@@ -3,9 +3,8 @@ import { UpdateClientService } from '../../services/client/UpdateClientService';
 
 class UpdateClientController {
     async handle(req: Request, res: Response) {
-      const {
-        id,
-        name,
+      const { id } = req.params;
+      const {name,
         email,
         cpf,
         telefone,
@@ -15,8 +14,10 @@ class UpdateClientController {
         dataVencimento,
         valorPlano,
         quantidadeSessoes,
-        situacao,
-      } = req.body;
+        situacao} = req.body
+
+        console.log('Id do cliente ', id);
+        
   
       const updateClientService = new UpdateClientService();
   
@@ -35,7 +36,7 @@ class UpdateClientController {
         situacao,
       });
   
-      return res.json(updatedClient);
+      return res.json(id);
     }
   }
   

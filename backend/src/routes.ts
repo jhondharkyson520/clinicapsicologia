@@ -18,6 +18,7 @@ import { UpdateClientController } from './controllers/client/UpdateClientControl
 import { DeleteClientController } from './controllers/client/DeleteClientController';
 import { DeleteAgendaController } from './controllers/agenda/DeleteAgendaController';
 import { ListAtrasadosController } from './controllers/caixa/ListAtrasadosController';
+import { DetailClientController } from './controllers/client/DetailClientController';
 
 
 const router = Router();
@@ -28,8 +29,11 @@ router.get('/me', isAuthenticated, new DetailUserController().handle);
 
 router.post('/client', isAuthenticated, new CreateClientController().handle);
 router.get('/clientlist', isAuthenticated, new ListClientController().handle);
-router.post('/client/update', isAuthenticated, new UpdateClientController().handle);
+router.put('/client/update/:id', isAuthenticated, new UpdateClientController().handle);
+router.get('/client/detail/:id', isAuthenticated, new DetailClientController().handle);
 router.delete('/client/:id', isAuthenticated, new DeleteClientController().handle);
+//precisa criar rota de detalhes do cliente....
+
 
 router.post('/agenda', isAuthenticated, new CreateAgendaController().handle);
 router.get('/agendalist', isAuthenticated, new ListAgendaController().handle);

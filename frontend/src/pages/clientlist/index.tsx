@@ -6,6 +6,9 @@ import { FiRefreshCcw, FiEdit2, FiSearch } from "react-icons/fi";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { setupAPIClient } from "@/services/api";
 import { useState } from "react";
+import ClientEdit from "../clientedit";
+import Link from "next/link";
+import router from "next/router";
 
 
 type ListProps = {
@@ -30,6 +33,7 @@ export default function ClientList({ clients }: ClientProps) {
 
     const [clientList, setClientList] = useState(clients || []);
     const [searchTerm, setSearchTerm] = useState('');
+    const [selectedClientId, setSelectedClientId] = useState<string | null>(null);
 
    
     const formatDate = (date:any) => {
@@ -38,23 +42,24 @@ export default function ClientList({ clients }: ClientProps) {
   
 
     function handleOpenEdit(id: string) {
-
-    }
+        router.push(`/clientedit?id=${id}`);
+      }
+      
 
     const handleDelete = async (id: string) => {
+        
         try {
-          // Implemente a lógica para excluir o cliente no backend
-          // Exemplo usando a API configurada no seu código existente
+
           const apiClient = setupAPIClient(id);
           await apiClient.delete(`/client/${id}`);
     
-          // Atualize a lista de clientes após a exclusão
           const updatedClientList = clientList.filter((client) => client.id !== id);
           setClientList(updatedClientList);
         } catch (error) {
           console.error("Erro ao excluir o cliente:", error);
-          // Trate o erro de acordo com suas necessidades
+          
         }
+
       };
 
 
@@ -160,6 +165,7 @@ export default function ClientList({ clients }: ClientProps) {
                     </table>
 
                 </main>
+                {selectedClientId && <ClientEdit id={selectedClientId} />}
             </div>
         </>
     )
@@ -176,3 +182,4 @@ export const getServerSideProps = canSSRAuth(async (ctx) => {
         }
     };
 });
+
