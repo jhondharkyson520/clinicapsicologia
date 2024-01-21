@@ -1,0 +1,19 @@
+
+.calendarContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+  }
+  
+  .calendarButtons {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  
+  .calendar {
+    max-width: 600px;
+    width: 100%;
+  }
+  

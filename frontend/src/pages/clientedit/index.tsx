@@ -48,24 +48,26 @@ export default function ClientEdit({ id }: Props){
           const apiClient = setupAPIClient();
           const response = await apiClient(`/client/detail/${clientId}`); //(Create route of detail the client)
           const clientData = response.data;
+          console.log('Dados do Cliente:', clientData);
   
-          setIdClient(clientData.idClient);
+          setIdClient(clientData.id);
           setName(clientData.name);
           setEmail(clientData.email);
           setCpf(clientData.cpf);
           setTelefone(clientData.telefone);          
           setEndereco(clientData.endereco);          
-          setDataV(clientData.dataV);
-          setValor(clientData.valor);
-          setQuantidade(clientData.quantidade);
+          setDataV(clientData.dataVencimento);
+          setValorMask(clientData.valorPlano);
+          setQuantidade(clientData.quantidadeSessoes);
           setTipoPlano(clientData.tipoPlano);
           setPlanoFamiliar(clientData.planoFamiliar);
           setTipoPacote(clientData.tipoPacote);
           setSituacao(clientData.situacao);
+          console.log('Nome e email: ', clientData.quantidadeSessoes, clientData.planoFamiliar, clientData.dataVencimento);
           
         } catch (error) {
           console.log('Erro ao buscar dados do cliente:', error);
-          console.log('Nome e semail: ', name, email);
+          
           
         }
       };
@@ -112,6 +114,12 @@ export default function ClientEdit({ id }: Props){
         setPlanoFamiliarDisabled(e.target.value !== 'Familiar');
     };
 
+    const handleTeste = (e: React.ChangeEvent<HTMLSelectElement>) => {
+      setPlanoFamiliar(e.target.value);
+    };
+
+   
+
     async function handleRegister(event: FormEvent) {
         event.preventDefault();
 
@@ -148,6 +156,7 @@ export default function ClientEdit({ id }: Props){
           }
     
           const requestData = {
+            id,
             name,
             email,
             cpf,
@@ -160,43 +169,28 @@ export default function ClientEdit({ id }: Props){
             quantidadeSessoes: parseInt(quantidade, 10),
             situacao,
           };
-    
+          
+          const clientId = router.query.id as string;
           const apiClient = setupAPIClient();
-          const response = await apiClient.put(`/client/${id}`, {
-            name,
-            email,
-            cpf,
-            telefone,
-            endereco,
-            tipoPlano,
-            planoFamiliar,
-            dataVencimento: formattedDataVencimento,
-            valorPlano: parseFloat(valor),
-            quantidadeSessoes: parseInt(quantidade, 10),
-            situacao,
-          });
+          const response = await apiClient.put(`/client/update/${clientId}`, requestData);
+  
     
           toast.success('Cliente atualizado com sucesso');
+          
+
+  
+         router.push('/clientlist');
         } catch (error) {
-          console.error('Erro ao atualizar cliente:', error);
+          console.log('Erro ao atualizar cliente:', error);
           toast.error('Erro ao atualizar cliente');
         }
       
 
-        setCamposFaltando([]);
     
-        setName('');
-        setEmail('');
-        setCpf('');
-        setTelefone('');
-        setDataV('');
-        setValorMask('');
-        setEndereco('');
-        setQuantidade('');
-        setTipoPlano('');
-        setPlanoFamiliar('');
-        setTipoPacote('');
+        
     }
+
+
 
     return(
         <>
@@ -259,12 +253,11 @@ export default function ClientEdit({ id }: Props){
                         <select
                             id="planoFamiliar"
                             value={planoFamiliar}
-                            onChange={(e) => setPlanoFamiliar(e.target.value)}
-                            disabled={planoFamiliarDisabled}
+                            onChange={handleTeste}
                         >
                             <option value="" disabled hidden>Plano Familiar</option>
                             <option value="Dependente">Dependente</option>
-                            <option value="Responsável">Responsável</option>
+                            <option value="Responsavel">Responsável</option>
                         </select>
 
                         <select
@@ -283,7 +276,7 @@ export default function ClientEdit({ id }: Props){
                         placeholder="Data vencimento"
                         value={dataV}
                         onChange={(e) => setDataV(e.target.value)}
-                        disabled={dataVencimentoDisabled}
+                        
                     />
                     
 
