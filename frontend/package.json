@@ -30,6 +30,7 @@
     "react": "18.2.0",
     "react-big-calendar": "^1.8.6",
     "react-calendar": "^4.8.0",
+    "react-datepicker": "^4.25.0",
     "react-dom": "18.2.0",
     "react-icons": "^4.9.0",
     "react-input-mask": "^2.0.4",
@@ -42,6 +43,7 @@
   "devDependencies": {
     "@types/luxon": "^3.4.0",
     "@types/react-big-calendar": "^1.8.8",
+    "@types/react-datepicker": "^4.19.5",
     "@types/react-input-mask": "^3.0.5",
     "@types/react-modal": "^3.16.3"
   }

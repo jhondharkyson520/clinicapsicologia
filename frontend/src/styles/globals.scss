@@ -1,6 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import "~react-datepicker/dist/react-datepicker.css";
 
 * {
   margin: 0;
@@ -17,6 +18,7 @@
 
   
   --blue-700: #3FBAC2;
+  --blue-900: #0B8185;
 
   --gray-100: #8A8A8A;
 

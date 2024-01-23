@@ -14,6 +14,10 @@ import FullCalendar from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import interactionPlugin from '@fullcalendar/interaction';
 import ptBrLocale from '@fullcalendar/core/locales/pt-br';
+import { FaCalendarAlt, FaCalendarDay, FaCalendarWeek } from "react-icons/fa";
+import 'react-datepicker/dist/react-datepicker.css';
+import DatePicker from 'react-datepicker';
+import ptBR from 'date-fns/locale/pt-BR';
 
 
 
@@ -34,16 +38,20 @@ export default function Agenda() {
   const [clients, setClients] = useState<Client[]>([]);
   const [agenda, setAgenda] = useState<Agenda[]>([]);
   const [selectedClientId, setSelectedClientId] = useState("");
-  const [selectedDate, setSelectedDate] = useState('');
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedTime, setSelectedTime] = useState('');
-  const [error, setError] = useState<string | null>(null);
+  const [currentView, setCurrentView] = useState<string>('dayGridDay'); 
   const [events, setEvents] = useState<any[]>([]);
   const router = useRouter();
+  const [isDatePickerOpen, setDatePickerOpen] = useState(false);
 
   console.log(events);
+
+  const handleViewChange = (view: string) => {
+    setCurrentView(view);
+  };
   
   useEffect(() => {
-    // Carregue a lista de clientes ao montar o componente
     fetchClients();
   }, []);
 
@@ -113,8 +121,8 @@ export default function Agenda() {
   
   
 
-  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSelectedDate(e.target.value);
+  const handleDateChange = (date: Date | null) => {
+    setSelectedDate(date);
   };
 
   const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -148,22 +156,24 @@ export default function Agenda() {
      }
      
      
-  
+     const formattedDate = selectedDate ? selectedDate.toLocaleDateString('pt-BR') : '';
+
       
-      const agendamentoData = {
-        dataConsulta: selectedDate,
-        horarioConsulta: selectedTime,
-        client_id: selectedClientId,
-        sessoesContador: 1,
-      };
+     const agendamentoData = {
+      dataConsulta: formattedDate,
+      horarioConsulta: selectedTime,
+      client_id: selectedClientId,
+      sessoesContador: 1,
+    };
       console.log(agendamentoData);
       
   
       const response = await apiClient.post("/agenda", agendamentoData);
       
       
-      setSelectedDate('');
       setSelectedTime('');
+      setClients([]);
+      setSelectedDate(null);
   
       console.log("Agendamento bem-sucedido:", response.data);
     } catch (error) {
@@ -171,12 +181,33 @@ export default function Agenda() {
     }
   };
 
+  function getRandomColor() {
+    const letters = '0123456789ABCDEF';
+    let color = '#';
+    for (let i = 0; i < 6; i++) {
+      color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+  }
+
   function renderEventContent(eventInfo:any) {
-    return (
-      <>
-        <b>{eventInfo.event.title}</b>
-      </>
-    )
+    const { title } = eventInfo.event;
+
+  // Estilização personalizada para cada evento
+  const eventStyle: React.CSSProperties = {
+    padding: '8px',
+    backgroundColor: getRandomColor(), // Use a função para obter uma cor aleatória
+    color: '#fff', // Cor do texto
+    borderRadius: '4px',
+    cursor: 'pointer',
+    display: 'flex'
+  };
+
+  return (
+    <div style={eventStyle}>
+      <b>{title}</b>
+    </div>
+  );
   }
 
   return (
@@ -188,7 +219,7 @@ export default function Agenda() {
         <Header />
         <main className={styles.container}>
           <div className={styles.containerHeader}>
-            <h1>Agenda</h1>
+            <h1>Realizar agendamentos</h1>
           </div>
           
             <form className={styles.form} onSubmit={handleAgendamento}>
@@ -209,13 +240,24 @@ export default function Agenda() {
             </div>
               
             <div className={styles.inputDateHour}>
+              
+              <div className={styles.datePickerContainer}>
               <HiOutlineCalendar size={25} className={styles.iconsInputCalendar}/>
-                <InputMask
-                  mask="99/99/9999"
-                  placeholder="Informe a data"
-                  value={selectedDate}
-                  onChange={handleDateChange}
+                <DatePicker
+                  selected={selectedDate}
+                  onChange={(date: Date) => handleDateChange(date)}
+                  dateFormat="dd/MM/yyyy"
+                  placeholderText="Informe a data"
+                  showYearDropdown
+                  yearDropdownItemNumber={15}
+                  scrollableYearDropdown
+                  className={`${styles.datePicker} ${isDatePickerOpen ? styles.datePickerOpen : ''}`}
+                  onFocus={() => setDatePickerOpen(true)}
+                  onBlur={() => setDatePickerOpen(false)}
+                  open={isDatePickerOpen}
+                  locale={ptBR}
                 />
+              </div>
                 
                 
               <HiOutlineClock size={25} className={styles.iconsInputClock}/>
@@ -232,17 +274,71 @@ export default function Agenda() {
               </button>
             </form>
 
-            <div>
-              <FullCalendar
-                plugins={[dayGridPlugin, interactionPlugin]}
-                initialView='dayGridWeek'
-                weekends={true}
-                events={events}
-                eventContent={renderEventContent}
-                locales={[ptBrLocale]}
-              />
+            <div className={styles.containerCalendar}>
+              <h1>Calendário</h1>
+            </div>
+            <div className={styles.viewCalendar}>
+            <div className={styles.viewButtons}>
+
+            
+              <button
+                className={currentView === 'dayGridDay' ? styles.activeView : ''}
+                onClick={() => handleViewChange('dayGridDay')}
+              >
+                {<FaCalendarDay />}
+                Dia
+              </button>
+              <button
+                className={currentView === 'dayGridWeek' ? styles.activeView : ''}
+                onClick={() => handleViewChange('dayGridWeek')}
+              >
+                {<FaCalendarWeek />}
+                Semana
+              </button>
+              <button
+                className={currentView === 'dayGridMonth' ? styles.activeView : ''}
+                onClick={() => handleViewChange('dayGridMonth')}
+              >
+                {<FaCalendarAlt />}
+                Mês
+              </button>
             </div>
 
+            <div>
+              {currentView === 'dayGridDay' && (
+                <FullCalendar
+                  plugins={[dayGridPlugin]}
+                  initialView='dayGridDay'
+                  weekends={true}
+                  events={events}
+                  eventContent={renderEventContent}
+                  locales={[ptBrLocale]}
+                />
+              )}
+
+              {currentView === 'dayGridWeek' && (
+                <FullCalendar
+                  plugins={[dayGridPlugin, interactionPlugin]}
+                  initialView='dayGridWeek'
+                  weekends={true}
+                  events={events}
+                  eventContent={renderEventContent}
+                  locales={[ptBrLocale]}
+                />
+              )}
+
+              {currentView === 'dayGridMonth' && (
+                <FullCalendar
+                  plugins={[dayGridPlugin]}
+                  initialView='dayGridMonth'
+                  weekends={true}
+                  events={events}
+                  eventContent={renderEventContent}
+                  locales={[ptBrLocale]}
+                />
+              )}
+            </div>            
+            </div>
         </main>
       </div>
     </>
