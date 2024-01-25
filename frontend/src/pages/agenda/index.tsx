@@ -18,6 +18,7 @@ import { FaCalendarAlt, FaCalendarDay, FaCalendarWeek } from "react-icons/fa";
 import 'react-datepicker/dist/react-datepicker.css';
 import DatePicker from 'react-datepicker';
 import ptBR from 'date-fns/locale/pt-BR';
+import { toast } from "react-toastify";
 
 
 
@@ -75,6 +76,8 @@ export default function Agenda() {
       const response = await apiClient.get("/agendalist");
   
       console.log("Resposta do servidor:", response.data);
+
+      
   
       const formattedEvents = response.data.map((agendaItem: any) => {
         console.log("Data e Hora Consulta:", agendaItem.dataConsulta, agendaItem.horarioConsulta);
@@ -137,23 +140,48 @@ export default function Agenda() {
   
       if (!selectedClientId) {
         console.error('Selecione um cliente antes de agendar.');
+        toast.error('Selecione um cliente antes de agendar!');
         return;
       }
-
-      const dataHoraLuxon = DateTime.fromFormat(`${selectedDate} ${selectedTime}`, 'dd/MM/yyyy HH:mm', { zone: 'UTC' });
-
-      const horaAtual = DateTime.now();
       
-     console.log(dataHoraLuxon);
-     console.log(horaAtual);
+
+      const selectedDateFormatted = selectedDate ? selectedDate.toLocaleDateString('pt-BR') : '';
+      const selectedTimeWithoutColon = selectedTime.replace(':', '');
+      
+      const dateTimeString = `${selectedDateFormatted} ${selectedTimeWithoutColon}`;
+      console.log('String de data e hora:', `${selectedDateFormatted} ${selectedTimeWithoutColon}`);
+
+      const dataHoraLuxon = DateTime.fromFormat(
+        `${selectedDateFormatted} ${selectedTimeWithoutColon}`, 
+        'dd/MM/yyyy HHmm', 
+        { zone: 'UTC' }
+      );
+      
+      const horaAtual = DateTime.now().setZone('America/Sao_Paulo');
+      
+      const dataHoraLuxonISO = dataHoraLuxon.toISO();
+      const horaAtualISO = horaAtual.toISO();
+      
+      console.log('DataHoraLuxon', dataHoraLuxon);
+      console.log('HoraAtual', horaAtual);
+      console.log('DataHoraLuxonISO', dataHoraLuxonISO);
+      console.log('HoraAtualISO', horaAtualISO);
+      
+      if (dataHoraLuxon < horaAtual) {
+        console.log('Não é possível fazer agendamentos passados ou na mesma data e hora atual');
+        toast.error('Não é possível fazer agendamentos passados ou na mesma data e hora atual!');
+        return;
+      }
+      
+      
+      
+      
+      
       
 
     
-     if(dataHoraLuxon <= horaAtual)
-     {
-      console.log('não é possivel fazer agendamentos passados');      
-      return;
-     }
+    
+    
      
      
      const formattedDate = selectedDate ? selectedDate.toLocaleDateString('pt-BR') : '';
@@ -172,12 +200,18 @@ export default function Agenda() {
       
       
       setSelectedTime('');
-      setClients([]);
+      setSelectedClientId('');
       setSelectedDate(null);
   
       console.log("Agendamento bem-sucedido:", response.data);
+      toast.success('Horário marcado com sucesso!');
     } catch (error) {
       console.error("Erro ao agendar:", error);
+      toast.error('Já existe um agendamento para a mesma data e horário.');
+      setSelectedTime('');      
+      setSelectedClientId('');
+      setSelectedDate(null);
+      
     }
   };
 
