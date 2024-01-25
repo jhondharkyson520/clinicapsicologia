@@ -10,6 +10,14 @@
     .container {
       max-width: 100%;
     }
+
+    .viewButtons{
+      display: none !important;
+
+      button{
+        display: none !important;
+      }
+    }
     
     
   }

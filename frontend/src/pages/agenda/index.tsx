@@ -146,33 +146,32 @@ export default function Agenda() {
       
 
       const selectedDateFormatted = selectedDate ? selectedDate.toLocaleDateString('pt-BR') : '';
-      const selectedTimeWithoutColon = selectedTime.replace(':', '');
-      
-      const dateTimeString = `${selectedDateFormatted} ${selectedTimeWithoutColon}`;
-      console.log('String de data e hora:', `${selectedDateFormatted} ${selectedTimeWithoutColon}`);
+const selectedTimeWithoutColon = selectedTime.replace(':', '');
 
-      const dataHoraLuxon = DateTime.fromFormat(
-        `${selectedDateFormatted} ${selectedTimeWithoutColon}`, 
-        'dd/MM/yyyy HHmm', 
-        { zone: 'UTC' }
-      );
-      
-      const horaAtual = DateTime.now().setZone('America/Sao_Paulo');
-      
-      const dataHoraLuxonISO = dataHoraLuxon.toISO();
-      const horaAtualISO = horaAtual.toISO();
-      
-      console.log('DataHoraLuxon', dataHoraLuxon);
-      console.log('HoraAtual', horaAtual);
-      console.log('DataHoraLuxonISO', dataHoraLuxonISO);
-      console.log('HoraAtualISO', horaAtualISO);
-      
-      if (dataHoraLuxon < horaAtual) {
-        console.log('Não é possível fazer agendamentos passados ou na mesma data e hora atual');
-        toast.error('Não é possível fazer agendamentos passados ou na mesma data e hora atual!');
-        return;
-      }
-      
+const dateTimeString = `${selectedDateFormatted} ${selectedTimeWithoutColon}`;
+console.log('String de data e hora:', `${selectedDateFormatted} ${selectedTimeWithoutColon}`);
+
+// Criar dataHoraLuxon no mesmo fuso horário da horaAtual
+const dataHoraLuxon = DateTime.fromFormat(
+  `${selectedDateFormatted} ${selectedTimeWithoutColon}`, 
+  'dd/MM/yyyy HHmm', 
+  { zone: 'America/Sao_Paulo' }
+);
+
+const horaAtual = DateTime.now().setZone('America/Sao_Paulo');
+
+console.log('DataHoraLuxon', dataHoraLuxon);
+console.log('HoraAtual', horaAtual);
+
+const diff = dataHoraLuxon.diff(horaAtual, 'minutes');
+const diffInMinutes = diff?.toObject().minutes;
+
+if (diffInMinutes !== undefined && diffInMinutes <= 0) {
+  console.log('Não é possível fazer agendamentos passados ou na mesma data e hora atual');
+  toast.error('Não é possível fazer agendamentos passados ou na mesma data e hora atual!');
+  return;
+}
+
       
       
       
