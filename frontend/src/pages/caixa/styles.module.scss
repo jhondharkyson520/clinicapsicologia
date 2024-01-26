@@ -28,7 +28,7 @@
 .tag{
     width: 9px;
     background-color: var(--green-900);
-    height: 60px;
+    height: 35rem;
     border-radius: 0.3rem 0 0 0.3rem;
     margin-right: 1rem;
 }
@@ -84,8 +84,144 @@
     margin-right: 7px;
   }
 
+  .buttonConfirm{
+    border-radius: 0.3rem;
+    height: 40px;
+    border: 0;
+    background-color: var(--red-900);
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: var(--white);
+}
+ 
+.itemsForm{
+  margin-top: 1rem;
+}
+
+.formCaixa{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.formRelatorio{
+  display: flex;
+}
+
+.containerSearch{
+  margin-top: 1rem;
+  margin-bottom: 2rem;
+  display: flex;
+  background-color: var(--white);
+  flex-direction: row;
+  padding: 0.5rem;
+  width: 20rem;
+  border-radius: 0.3rem;
+
+  input{
+    border: none;
+    width: 20rem;
+  }
+
+  button{
+      background-color: transparent;
+      border: 0;
+      margin-left: 3rem;
+  }
+
+}
+
+.containerRelatorio{
+  background-color: var(--white);
+  margin-bottom: 1rem;  
+  border-radius: 0.3rem;
+  margin-top: 2rem;
+  margin-bottom: 8rem;
+  gap: 2rem;
+}
+
+.orderClient{
+  display: table-row;
+  flex-direction: row;
+  background-color: var(--white);
+  align-items: center;
+  margin-bottom: 1rem;
+  justify-content: center;
+  border-radius: 0.3rem;
+  font-size: 1rem;
+  
+  
+  span{
+      padding: 0.7rem;
+      text-align: center;
+  }
+
+  
+}
+
+.listClients{
+  display: table;
+  flex-direction: column;
+  margin: 1rem 0;
+  text-align: center;
+  width: 100%;
+  border-collapse: collapse;
+  align-items: center;
+  justify-content: center;
   
 
+}
+
+@media screen and (max-width: 767px) {
+  .listClients{
+    display: flex;    
+    font-size: 15px;
+    
+    thead{
+      display: none;
+    }
+  }
+  .orderClient{     
+      width: 450px;
+      font-size: 12px;
+      
+      
+  }
+
+  .disableCell{
+    display: none;
+  }
+
+}
+
+
+
+.disableCell {
+
+vertical-align: middle;
+border: 1px solid transparent;
+text-align: center;
+justify-content: center;
+padding: 0 1rem 0 0;
+align-items: center;
+
+}
+
+.tagCell, .tableCell {
+  display: table-cell;
+  vertical-align: middle;
+  border: 1px solid transparent;
+  text-align: center;
+  justify-content: center;
+  padding: 0 1rem 0 0;
+  align-items: center;
+  
+}
+
+.tagCell {
+  width: 1%; 
+  
+}
   
 
   
