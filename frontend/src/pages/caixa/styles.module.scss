@@ -83,6 +83,7 @@
 }
 
 .buttonConfirm {
+  margin-top: 1rem;
   border-radius: 0.3rem;
   height: 40px;
   border: 0;
@@ -90,6 +91,12 @@
   font-size: 1.2rem;
   font-weight: bold;
   color: var(--white);
+  transition: 0.7s;
+
+  &:hover{
+    transform: scale(1.05);
+    background-color: var(--red-1000);
+  }
 }
 
 .itemsForm {

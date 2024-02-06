@@ -8,6 +8,7 @@ import { HiUsers } from "react-icons/hi";
 import { MdDateRange, MdCoPresent } from "react-icons/md";
 import { SiCashapp } from "react-icons/si";
 import { FiSearch } from "react-icons/fi";
+import { toast } from "react-toastify";
 
 interface Client {
   id: string;
@@ -17,11 +18,21 @@ interface Client {
   situacao: boolean;
 }
 
+interface Caixa {
+  id: string;
+  valorPlano: string;
+  valorAberto: string;
+  dataOperacao: Date;
+  client_id: string;
+}
+
 export default function Caixa() {
 
   const [clients, setClients] = useState<Client[]>([]);
+  const [caixa, setCaixa] = useState<Caixa[]>([]);
   const [selectedClientId, setSelectedClientId] = useState("");
   const [selectedClient, setSelectedClient] = useState<Client | null>(null);
+  const [selectedCaixa, setSelectedCaixa] = useState<Caixa | null>(null);
   const [valorMask, setValorMask] = useState('');
   const [valor, setValor] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
@@ -36,6 +47,16 @@ export default function Caixa() {
     }
   };
 
+  const fetchCaixa = async () => {
+    try {
+      const apiClient = setupAPIClient();
+      const response = await apiClient.get("/caixalist");
+      setCaixa(response.data);
+    } catch (error) {
+      console.error("Erro ao buscar lançamentos:", error);
+    }
+  };
+
   const fetchClientDetails = async (clientId: string) => {
     try {
       const apiClient = setupAPIClient();
@@ -47,6 +68,10 @@ export default function Caixa() {
       console.error("Erro ao buscar detalhes do cliente:", error);
     }
   };
+
+  useEffect(() => {
+    fetchCaixa();
+  }, []);
 
   useEffect(() => {
     fetchClients();
@@ -74,6 +99,7 @@ export default function Caixa() {
     try {
       if (!selectedClientId || valor === '') {
         console.error('Cliente ou valor não selecionado');
+        toast.warning('Preencha todos os campos!')
         return;
       }
   
@@ -86,47 +112,27 @@ export default function Caixa() {
   
       // A resposta da API pode conter informações adicionais que você deseja processar
       console.log('Resposta da API:', response.data);
-  
-      // Adicione aqui qualquer lógica adicional após o lançamento bem-sucedido
-  
+
       console.log('Lançamento bem-sucedido!');
+      toast.success('Lançamento bem-sucedido!');
+
+      setSelectedClientId('');
+      setSelectedClient(null);
+      setValorMask('');
     } catch (error) {
       console.error('Erro ao realizar o lançamento:', error);
+      toast.error('Erro ao realizar o lançamento');
     }
   };
   
-  const handleMarcarComoPago = async () => {
-    try {
-      if (!selectedClientId || valor === '') {
-        console.error('Cliente ou valor não selecionado');
-        return;
-      }
   
-      const apiClient = setupAPIClient();
-  
-      // Busca o cliente na API para obter o valor mais recente
-      const responseClient = await apiClient.get(`/client/detail/${selectedClientId}`);
-      const updatedClient = responseClient.data;
-  
-      // Calcula o valor restante
-      const valorRestante = updatedClient
-        ? parseFloat(updatedClient.valorPlano) - parseFloat(valor)
-        : 0;
-  
-      // Atualiza o valorAberto na API
-      const response = await apiClient.put(`/client/update/${selectedClientId}`, {
-        valorAberto: valorRestante.toString(),
-      });
-  
-      // A resposta da API pode conter informações adicionais que você deseja processar
-      console.log('Resposta da API (Marcar como pago):', response.data);
-  
-      // Adicione aqui qualquer lógica adicional após marcar como pago com sucesso
-  
-      console.log('Marcação como pago bem-sucedida!');
-    } catch (error) {
-      console.error('Erro ao marcar como pago:', error);
-    }
+
+  const formatarDataAtual = () => {
+    const dataAtual = new Date();
+    const dia = String(dataAtual.getDate()).padStart(2, '0');
+    const mes = String(dataAtual.getMonth() + 1).padStart(2, '0');
+    const ano = dataAtual.getFullYear();
+    return `${dia}/${mes}/${ano}`;
   };
 
   return (
@@ -167,7 +173,7 @@ export default function Caixa() {
 
               <div className={styles.itemsForm}>
                 <MdDateRange size={25} className={styles.iconsInput} />
-                <span>Data: <strong>26/01/2023</strong></span>
+                <span>Data atual: <strong>{formatarDataAtual()}</strong></span>
               </div>
 
               <div className={styles.itemsForm}>
@@ -177,22 +183,22 @@ export default function Caixa() {
                   type="text"
                   placeholder="Valor do Plano"
                   className={styles.inputContainerDisable}
-                  value={selectedClient ? selectedClient.valorPlano : ""}
+                  value={selectedClient ?  `R$ ${selectedClient.valorPlano|| '0.00'}` : 'R$ 0,00'}
                   readOnly
                 />
               </div>
 
               <div className={styles.itemsForm}>
-  <SiCashapp size={25} className={styles.iconsInput} />
-  <span>Valor em aberto: </span>
-  <input
-    type="text"
-    placeholder="Valor em Aberto"
-    className={styles.inputContainerDisable}
-    value={selectedClient ? `R$ ${selectedClient.valorAberto || '0.00'}` : 'R$ 0,00'}
-    readOnly
-  />
-</div>
+                <SiCashapp size={25} className={styles.iconsInput} />
+                <span>Valor em aberto: </span>
+                <input
+                  type="text"
+                  placeholder="Valor em Aberto"
+                  className={styles.inputContainerDisable}
+                  value={selectedClient ? `R$ ${selectedClient.valorAberto || '0.00'}` : 'R$ 0,00'}
+                  readOnly
+                />
+              </div>
 
               <div className={styles.itemsForm}>
                 <MdCoPresent size={25} className={styles.iconsInput} />
@@ -217,15 +223,11 @@ export default function Caixa() {
                 />
               </div>
 
-              <button className={styles.buttonConfirm} type="button" onClick={handleLancamento}>
-                Confirmar
-            </button>
-
             <div className={styles.itemsForm}>
-                <span>Valor restante: {selectedClient ? `R$ ${parseFloat(selectedClient.valorPlano) - parseFloat(valor)}` : 'R$ 0,00'}</span>
+                <span>Valor restante: <strong>{selectedClient ? `R$ ${parseFloat(selectedClient.valorPlano) - parseFloat(valor)}` : 'R$ 0,00'}</strong></span>
             </div>
 
-            <button className={styles.buttonConfirm} type="button" onClick={handleMarcarComoPago}>
+            <button className={styles.buttonConfirm} type="button"  onClick={handleLancamento} >
                 Marcar como pago
             </button>
             </form>
