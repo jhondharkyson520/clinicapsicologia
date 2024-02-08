@@ -36,6 +36,25 @@ export default function Caixa() {
   const [valorMask, setValorMask] = useState('');
   const [valor, setValor] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
+  const [valorEmAberto, setValorEmAberto] = useState('R$ 0,00');
+
+
+  const calcularValorEmAberto = async (clientId: string) => {
+    try {
+      const apiClient = setupAPIClient();
+      const response = await apiClient.get(`/caixa/latest/${clientId}`);
+      const latestCaixa = response.data;
+      if (latestCaixa) {
+        const valorAberto = latestCaixa.valorAberto.toString();
+        setValorEmAberto(`R$ ${valorAberto}`);
+      } else {
+        setValorEmAberto('R$ 0.00');
+      }
+    } catch (error) {
+      console.error("Erro ao buscar o valor em aberto:", error);
+    }
+  };
+  
 
   const fetchClients = async () => {
     try {
@@ -51,11 +70,16 @@ export default function Caixa() {
     try {
       const apiClient = setupAPIClient();
       const response = await apiClient.get("/caixalist");
+
+      //implementar lógica para aparecer o valor em aberto no campo valor em aberto, ele está sempre aparecendo 0.00
+
       setCaixa(response.data);
     } catch (error) {
       console.error("Erro ao buscar lançamentos:", error);
     }
   };
+
+  
 
   const fetchClientDetails = async (clientId: string) => {
     try {
@@ -63,7 +87,12 @@ export default function Caixa() {
       const response = await apiClient.get(`/client/detail/${clientId}`);
       const clientDetails = response.data;
 
+      if (parseFloat(clientDetails.valorAberto) <= 0) {
+        clientDetails.situacao = true; // Define a situação como "Pago"
+      }
+
       setSelectedClient(clientDetails);
+      calcularValorEmAberto(clientId);
     } catch (error) {
       console.error("Erro ao buscar detalhes do cliente:", error);
     }
@@ -195,7 +224,7 @@ export default function Caixa() {
                   type="text"
                   placeholder="Valor em Aberto"
                   className={styles.inputContainerDisable}
-                  value={selectedClient ? `R$ ${selectedClient.valorAberto || '0.00'}` : 'R$ 0,00'}
+                  value={valorEmAberto}
                   readOnly
                 />
               </div>

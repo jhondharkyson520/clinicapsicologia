@@ -19,6 +19,7 @@ import { DeleteClientController } from './controllers/client/DeleteClientControl
 import { DeleteAgendaController } from './controllers/agenda/DeleteAgendaController';
 import { ListAtrasadosController } from './controllers/caixa/ListAtrasadosController';
 import { DetailClientController } from './controllers/client/DetailClientController';
+import { LastCaixaController } from './controllers/caixa/LastCaixaController';
 
 
 const router = Router();
@@ -45,6 +46,7 @@ router.get('/caixalist', isAuthenticated, new ListCaixaController().handle);
 router.get('/caixa/atrasados', isAuthenticated, new ListAtrasadosController().handle);
 router.get('/caixa/name', isAuthenticated, new ListNameCaixaController().handle);
 router.get('/caixa/relatorio', isAuthenticated, new ListRelatorioController().handle);
+router.get('/caixa/latest/:id', isAuthenticated, new LastCaixaController().handle);
 
 
 export {router};
