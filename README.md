@@ -19,4 +19,7 @@ Desenvolvi este projeto com o objetivo de criar uma plataforma intuitiva e respo
 Estou sempre em busca de desafios que me permitam aprimorar minhas habilidades e contribuir para a comunidade de desenvolvimento web. 🚀
 ### **📷 Tela Inicial:**
 ![SGCP.png](https://jhondharkyson.com/assets/SGCP-dbdc370d.png)
+
+### **📷 Diagrama Relacional:**
+![SGCP.png](https://i.ibb.co/Jj6vGTy/Diagrama-Relacional.png)
 Se tiver alguma sugestão ou feedback, ficarei feliz em ouvir! Entre em contato. 📬
