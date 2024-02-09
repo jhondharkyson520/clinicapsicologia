@@ -88,7 +88,7 @@ export default function Caixa() {
       const clientDetails = response.data;
 
       if (parseFloat(clientDetails.valorAberto) <= 0) {
-        clientDetails.situacao = true; // Define a situação como "Pago"
+        clientDetails.situacao = true; 
       }
 
       setSelectedClient(clientDetails);
@@ -147,6 +147,7 @@ export default function Caixa() {
 
       setSelectedClientId('');
       setSelectedClient(null);
+      setValorEmAberto('');
       setValorMask('');
     } catch (error) {
       console.error('Erro ao realizar o lançamento:', error);
