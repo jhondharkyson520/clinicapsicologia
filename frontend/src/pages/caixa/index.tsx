@@ -71,8 +71,6 @@ export default function Caixa() {
       const apiClient = setupAPIClient();
       const response = await apiClient.get("/caixalist");
 
-      //implementar lógica para aparecer o valor em aberto no campo valor em aberto, ele está sempre aparecendo 0.00
-
       setCaixa(response.data);
     } catch (error) {
       console.error("Erro ao buscar lançamentos:", error);
@@ -138,8 +136,7 @@ export default function Caixa() {
         client_id: selectedClientId,
         valorPago: parseFloat(valor),
       });
-  
-      // A resposta da API pode conter informações adicionais que você deseja processar
+
       console.log('Resposta da API:', response.data);
 
       console.log('Lançamento bem-sucedido!');
