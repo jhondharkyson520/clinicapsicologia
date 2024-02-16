@@ -7,7 +7,6 @@ import { useEffect, useState } from "react";
 import { HiUsers } from "react-icons/hi";
 import { MdDateRange, MdCoPresent } from "react-icons/md";
 import { SiCashapp } from "react-icons/si";
-import { FiSearch } from "react-icons/fi";
 import { toast } from "react-toastify";
 
 interface Client {
@@ -31,14 +30,11 @@ export default function Caixa() {
   const [clients, setClients] = useState<Client[]>([]);
   const [caixa, setCaixa] = useState<Caixa[]>([]);
   const [selectedClientId, setSelectedClientId] = useState("");
-  const [selectedClient, setSelectedClient] = useState<Client | null>(null);
-  const [selectedCaixa, setSelectedCaixa] = useState<Caixa | null>(null);
+  const [selectedClient, setSelectedClient] = useState<Client | null>(null);  
   const [valorMask, setValorMask] = useState('');
   const [valor, setValor] = useState('');
-  const [searchTerm, setSearchTerm] = useState('');
   const [valorEmAberto, setValorEmAberto] = useState('R$ 0,00');  
   const [valorPlano, setValorPlano] = useState<Number>();
-  const [valorRestante, setValorRestante] = useState('');
 
 
    
@@ -83,7 +79,8 @@ export default function Caixa() {
         setValorEmAberto('R$ 0.00');
       }
     } catch (error) {
-      console.error("Erro ao buscar o valor em aberto:", error);
+      toast.error("Erro ao buscar saldo do cliente!");
+      //console.error("Erro ao buscar o valor em aberto:", error);
     }
   };
   
@@ -94,7 +91,8 @@ export default function Caixa() {
       const response = await apiClient.get("/clientlist");
       setClients(response.data);
     } catch (error) {
-      console.error("Erro ao buscar clientes:", error);
+      toast.error('Erro ao buscar clientes cadastrados!');
+      //console.error("Erro ao buscar clientes:", error);
     }
   };
 
@@ -105,7 +103,8 @@ export default function Caixa() {
 
       setCaixa(response.data);
     } catch (error) {
-      console.error("Erro ao buscar lançamentos:", error);
+      toast.error('Erro ao buscar lançamentos!');
+      //console.error("Erro ao buscar lançamentos:", error);
     }
   };
 
@@ -117,7 +116,7 @@ export default function Caixa() {
       const response = await apiClient.get(`/client/detail/${clientId}`);
       const clientDetails = response.data;
 
-      console.log("Detalhes do cliente:", clientDetails);
+      //console.log("Detalhes do cliente:", clientDetails);
 
       const valorAberto = parseFloat(clientDetails.valorAberto);
       const valorPlanoFloat = parseFloat(clientDetails.valorPlano); // Convertendo para float
@@ -125,22 +124,18 @@ export default function Caixa() {
 
       setSelectedClient({ ...clientDetails, situacao: situacaoCliente, valorPlano: valorPlanoFloat.toFixed(2) }); // Aplicando a formatação
 
-      console.log("valor plano fim ", valorPlanoFloat.toFixed(2));
+      //console.log("valor plano fim ", valorPlanoFloat.toFixed(2));
 
       setValorPlano(valorPlanoFloat);
 
 
-      // restante retornando 000, verificar
-      
-    const valorRestante = valorEmAberto.replace(/[^\d.-]/g, '');
-    setValorRestante(valorRestante);
-    console.log('valor restante: ', valorRestante);
     
       
 
       calcularValorEmAberto(clientId);
     } catch (error) {
-      console.error("Erro ao buscar detalhes do cliente:", error);
+      toast.error('Erro ao buscar detalhes do cliente!');
+      //console.error("Erro ao buscar detalhes do cliente:", error);
     }
   };
   
@@ -161,7 +156,7 @@ export default function Caixa() {
   
   useEffect(() => {
     if (selectedClient) {
-      console.log("valor plano fim2 ", selectedClient.valorPlano);
+      //console.log("valor plano fim2 ", selectedClient.valorPlano);
     }
   }, [selectedClient]); 
   
@@ -187,8 +182,8 @@ export default function Caixa() {
   const handleLancamento = async () => {
     try {
       if (!selectedClientId || valor === '') {
-        console.error('Cliente ou valor não selecionado');
-        toast.warning('Preencha todos os campos!')
+        //console.error('Cliente ou valor não selecionado');
+        toast.warning('Preencha todos os campos!');
         return;
       }
   
@@ -199,8 +194,8 @@ export default function Caixa() {
         valorPago: parseFloat(valor),
       });
   
-      console.log('Resposta da API:', response.data);
-      console.log('Lançamento bem-sucedido!');
+      //console.log('Resposta da API:', response.data);
+      //console.log('Lançamento bem-sucedido!');
       toast.success('Lançamento bem-sucedido!');
   
       const situacaoCliente = valorEmAberto.includes('-') ? false : true;
@@ -208,7 +203,7 @@ export default function Caixa() {
         situacao: situacaoCliente,
       });
   
-      console.log('Resposta do update do cliente:', updateResponse.data);
+      //console.log('Resposta do update do cliente:', updateResponse.data);
   
       setSelectedClientId('');
       setSelectedClient(null);
@@ -222,7 +217,7 @@ export default function Caixa() {
         situacao: false
       });
     } catch (error) {
-      console.error('Erro ao realizar o lançamento:', error);
+      //console.error('Erro ao realizar o lançamento:', error);
       toast.error('Erro ao realizar o lançamento');
     }
   };
@@ -241,15 +236,13 @@ export default function Caixa() {
 
   const textoSituacao = () => {
     const valorAbertoString = valorEmAberto.replace(/[^\d.-]/g, ''); // Remover todos os caracteres não numéricos
-    let valorAberto = parseFloat(valorAbertoString); // Converter para float ou usar 0 se a conversão falhar
-    console.log(valorAberto);
+    let valorAberto = parseFloat(valorAbertoString); 
+    //console.log(valorAberto);
   
     const situacao = valorAberto > 0 ? 'Pago' : 'Vencido';
     return situacao;
   };
   
-  console.log("ValorEmAberto:", valorRestante);
-console.log("Valor:", valor);
 
   return (
     <>
@@ -339,10 +332,7 @@ console.log("Valor:", valor);
                 />
               </div>
 
-              <div className={styles.itemsForm}>
-              <span>Valor restante: <strong>{selectedClient ? `R$ ${(parseFloat(valorRestante) || 0) - (parseFloat(valor) || 0)}` : 'R$ 0,00'}</strong></span>
-
-              </div>
+              
 
               <button className={styles.buttonConfirm} type="button" onClick={handleLancamento}>
                 {selectedClient && selectedClient.situacao ? 'Pago' : 'Marcar como pago'}
