@@ -36,17 +36,49 @@ export default function Caixa() {
   const [valorMask, setValorMask] = useState('');
   const [valor, setValor] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
-  const [valorEmAberto, setValorEmAberto] = useState('R$ 0,00');
+  const [valorEmAberto, setValorEmAberto] = useState('R$ 0,00');  
+  const [valorPlano, setValorPlano] = useState<Number>();
+  const [valorRestante, setValorRestante] = useState('');
 
 
+   
+  
+
+
+ 
+
+
+  const getSaldoStatus = (valorAberto: string) => {
+    const saldo = parseFloat(valorAberto);
+    if (saldo > 0) {
+      return { status: 'Saldo positivo', situacao: true };
+    } else if (saldo < 0) {
+      return { status: 'Saldo devedor', situacao: false };
+    }
+    return { status: '', situacao: false };
+  };
+  
+  
   const calcularValorEmAberto = async (clientId: string) => {
     try {
       const apiClient = setupAPIClient();
       const response = await apiClient.get(`/caixa/latest/${clientId}`);
       const latestCaixa = response.data;
+      
       if (latestCaixa) {
-        const valorAberto = latestCaixa.valorAberto.toString();
-        setValorEmAberto(`R$ ${valorAberto}`);
+        let valorAberto = parseFloat(latestCaixa.valorAberto);
+  
+        if (valorAberto > 0) {
+          valorAberto *= -1;
+        } else if (valorAberto < 0) {
+          valorAberto *= -1;
+        }
+        
+        setValorEmAberto(`R$ ${valorAberto.toFixed(2)}`);
+        
+        const { situacao } = getSaldoStatus(valorAberto.toString());
+        
+        setSelectedClient({ ...selectedClient!, situacao, id: clientId, valorPlano: latestCaixa.valorPlano });
       } else {
         setValorEmAberto('R$ 0.00');
       }
@@ -78,31 +110,61 @@ export default function Caixa() {
   };
 
   
-
+  
   const fetchClientDetails = async (clientId: string) => {
     try {
       const apiClient = setupAPIClient();
       const response = await apiClient.get(`/client/detail/${clientId}`);
       const clientDetails = response.data;
 
-      if (parseFloat(clientDetails.valorAberto) <= 0) {
-        clientDetails.situacao = true; 
-      }
+      console.log("Detalhes do cliente:", clientDetails);
 
-      setSelectedClient(clientDetails);
+      const valorAberto = parseFloat(clientDetails.valorAberto);
+      const valorPlanoFloat = parseFloat(clientDetails.valorPlano); // Convertendo para float
+      const situacaoCliente = isNaN(valorAberto) ? false : valorAberto > 0 ? false : true;
+
+      setSelectedClient({ ...clientDetails, situacao: situacaoCliente, valorPlano: valorPlanoFloat.toFixed(2) }); // Aplicando a formatação
+
+      console.log("valor plano fim ", valorPlanoFloat.toFixed(2));
+
+      setValorPlano(valorPlanoFloat);
+
+
+      // restante retornando 000, verificar
+      
+    const valorRestante = valorEmAberto.replace(/[^\d.-]/g, '');
+    setValorRestante(valorRestante);
+    console.log('valor restante: ', valorRestante);
+    
+      
+
       calcularValorEmAberto(clientId);
     } catch (error) {
       console.error("Erro ao buscar detalhes do cliente:", error);
     }
   };
+  
 
   useEffect(() => {
     fetchCaixa();
   }, []);
-
+  
   useEffect(() => {
     fetchClients();
   }, []);
+  
+  useEffect(() => {
+    if (selectedClientId) {
+      fetchClientDetails(selectedClientId);
+    }
+  }, [selectedClientId]); 
+  
+  useEffect(() => {
+    if (selectedClient) {
+      console.log("valor plano fim2 ", selectedClient.valorPlano);
+    }
+  }, [selectedClient]); 
+  
 
   const maskMoney = (value: string) => {
     const numericValue = value.replace(/\D/g, '');
@@ -136,21 +198,35 @@ export default function Caixa() {
         client_id: selectedClientId,
         valorPago: parseFloat(valor),
       });
-
+  
       console.log('Resposta da API:', response.data);
-
       console.log('Lançamento bem-sucedido!');
       toast.success('Lançamento bem-sucedido!');
-
+  
+      const situacaoCliente = valorEmAberto.includes('-') ? false : true;
+      const updateResponse = await apiClient.put(`/client/update/${selectedClientId}`, {
+        situacao: situacaoCliente,
+      });
+  
+      console.log('Resposta do update do cliente:', updateResponse.data);
+  
       setSelectedClientId('');
       setSelectedClient(null);
       setValorEmAberto('');
       setValorMask('');
+      setSelectedClient({
+        id: '',
+        name: '',
+        valorPlano: '0.00',
+        valorAberto: '0.00',
+        situacao: false
+      });
     } catch (error) {
       console.error('Erro ao realizar o lançamento:', error);
       toast.error('Erro ao realizar o lançamento');
     }
   };
+  
   
   
 
@@ -161,6 +237,19 @@ export default function Caixa() {
     const ano = dataAtual.getFullYear();
     return `${dia}/${mes}/${ano}`;
   };
+
+
+  const textoSituacao = () => {
+    const valorAbertoString = valorEmAberto.replace(/[^\d.-]/g, ''); // Remover todos os caracteres não numéricos
+    let valorAberto = parseFloat(valorAbertoString); // Converter para float ou usar 0 se a conversão falhar
+    console.log(valorAberto);
+  
+    const situacao = valorAberto > 0 ? 'Pago' : 'Vencido';
+    return situacao;
+  };
+  
+  console.log("ValorEmAberto:", valorRestante);
+console.log("Valor:", valor);
 
   return (
     <>
@@ -210,14 +299,14 @@ export default function Caixa() {
                   type="text"
                   placeholder="Valor do Plano"
                   className={styles.inputContainerDisable}
-                  value={selectedClient ?  `R$ ${selectedClient.valorPlano|| '0.00'}` : 'R$ 0,00'}
+                  value={selectedClient ? `R$ ${(valorPlano?.toFixed(2))}` : 'R$ 0,00'}
                   readOnly
                 />
               </div>
 
               <div className={styles.itemsForm}>
                 <SiCashapp size={25} className={styles.iconsInput} />
-                <span>Valor em aberto: </span>
+                <span>Saldo do cliente: </span>
                 <input
                   type="text"
                   placeholder="Valor em Aberto"
@@ -234,7 +323,7 @@ export default function Caixa() {
                   type="text"
                   placeholder="Situação"
                   className={styles.inputContainerDisable}
-                  value={selectedClient ? (selectedClient.situacao ? "Pago" : "Em aberto") : ""}
+                  value={textoSituacao()}
                   readOnly
                 />
               </div>
@@ -250,13 +339,14 @@ export default function Caixa() {
                 />
               </div>
 
-            <div className={styles.itemsForm}>
-                <span>Valor restante: <strong>{selectedClient ? `R$ ${parseFloat(selectedClient.valorPlano) - parseFloat(valor)}` : 'R$ 0,00'}</strong></span>
-            </div>
+              <div className={styles.itemsForm}>
+              <span>Valor restante: <strong>{selectedClient ? `R$ ${(parseFloat(valorRestante) || 0) - (parseFloat(valor) || 0)}` : 'R$ 0,00'}</strong></span>
 
-            <button className={styles.buttonConfirm} type="button"  onClick={handleLancamento} >
-                Marcar como pago
-            </button>
+              </div>
+
+              <button className={styles.buttonConfirm} type="button" onClick={handleLancamento}>
+                {selectedClient && selectedClient.situacao ? 'Pago' : 'Marcar como pago'}
+              </button>
             </form>
           </div>
 
