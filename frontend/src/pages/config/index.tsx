@@ -228,3 +228,10 @@ export default function Config() {
     </>
   );
 }
+
+export const getServerSideProps = canSSRAuth(async (ctx) => {
+
+  return {
+      props: {}
+  }
+})

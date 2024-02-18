@@ -38,7 +38,6 @@ router.get('/clientlist', isAuthenticated, new ListClientController().handle);
 router.put('/client/update/:id', isAuthenticated, new UpdateClientController().handle);
 router.get('/client/detail/:id', isAuthenticated, new DetailClientController().handle);
 router.delete('/client/:id', isAuthenticated, new DeleteClientController().handle);
-//precisa criar rota de detalhes do cliente....
 
 
 router.post('/agenda', isAuthenticated, new CreateAgendaController().handle);

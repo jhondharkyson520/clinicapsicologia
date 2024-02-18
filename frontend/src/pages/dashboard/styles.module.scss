@@ -1,0 +1,203 @@
+.container {
+    max-width: 900px;
+    margin: 4rem auto;
+    padding: 0 2rem;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  @media screen and (max-width: 767px) {
+    .container {
+      max-width: 100%;
+    }
+  
+    .orderClient span {
+      font-size: 0.8rem; 
+      margin-bottom: 0.5rem; 
+    }
+  
+    .buttonEdit,
+    .buttonDelete {
+      font-size: 0.8rem; 
+    }
+  }
+
+.container h1{
+    color: var(--black);
+}
+
+.containerHeader{
+    display: flex;
+    flex-direction: row;
+
+    button{
+        background-color: transparent;
+        border: 0;
+        margin-left: 1rem;
+    }
+
+}
+
+.containerSearch{
+  margin-top: 1rem;
+  margin-bottom: 2rem;
+  display: flex;
+  background-color: var(--white);
+  flex-direction: row;
+  padding: 0.5rem;
+  width: 20rem;
+  border-radius: 0.3rem;
+
+  input{
+    border: none;
+    width: 20rem;
+  }
+
+  button{
+      background-color: transparent;
+      border: 0;
+      margin-left: 3rem;
+  }
+
+}
+
+.listClients{
+    display: table;
+    flex-direction: column;
+    margin: 1rem 0;
+    text-align: center;
+    width: 100%;
+    border-collapse: collapse;
+    align-items: center;
+    justify-content: center;
+    
+  
+}
+
+.orderClient{
+    display: table-row;
+    flex-direction: row;
+    background-color: var(--white);
+    align-items: center;
+    margin-bottom: 1rem;
+    justify-content: center;
+    border-radius: 0.3rem;
+    font-size: 1rem;
+    height: 60px;
+    
+    
+    span{
+        padding: 0.7rem;
+        text-align: center;
+    }
+
+    
+}
+
+.buttonEdit{
+    background-color: transparent;
+    border: 0;
+    display: flex;
+    flex-direction: row;
+    padding: 1rem;
+    color: #3FFFA3;
+    transition: transform 0.7s;
+    
+    &:hover{
+        transform: scale(1.2);
+    }
+}
+
+.buttonDelete{
+    background-color: transparent;
+    border: 0;
+    display: flex;
+    flex-direction: row;
+    padding: 1rem;
+    color: var(--red-900);
+    transition: transform 0.7s;
+    
+    &:hover{
+        transform: scale(1.2);
+    }
+}
+
+.tag{
+    width: 9px;
+    background-color: var(--green-900);
+    height: 60px;
+    border-radius: 0.3rem 0 0 0.3rem;
+    margin-right: 1rem;
+}
+
+
+  
+@media screen and (max-width: 767px) {
+  .listClients{
+    display: flex;    
+    font-size: 15px;
+    
+    thead{
+      display: none;
+    }
+  }
+  .orderClient{     
+      width: 450px;
+      font-size: 12px;
+      
+      
+  }
+
+  .disableCell{
+    display: none;
+  }
+
+}
+
+.disableCell {
+  
+  vertical-align: middle;
+  border: 1px solid transparent;
+  text-align: center;
+  justify-content: center;
+  padding: 0 1rem 0 0;
+  align-items: center;
+  
+}
+
+  .tagCell, .tableCell {
+    display: table-cell;
+    vertical-align: middle;
+    border: 1px solid transparent;
+    text-align: center;
+    justify-content: center;
+    padding: 0 1rem 0 0;
+    align-items: center;
+    
+  }
+  
+  .tagCell {
+    width: 1%; 
+    
+  }
+  
+  .tag {
+    display: inline-block; 
+  }
+  
+  .buttonCell {
+    display: flex;
+    gap: 4px; 
+  }
+
+  .pagoText {
+    color: #3FFFA3; 
+    margin-left: 5px; 
+  }
+  
+  .vencidaText {
+    color: #F13D49; 
+    margin-right: 5px; 
+  }
+
+  
