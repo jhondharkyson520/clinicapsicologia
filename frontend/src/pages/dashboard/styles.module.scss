@@ -29,6 +29,8 @@
 .containerHeader{
     display: flex;
     flex-direction: row;
+    margin-bottom: 2rem;
+    margin-top: 2rem;
 
     button{
         background-color: transparent;
@@ -200,4 +202,82 @@
     margin-right: 5px; 
   }
 
+  .tag2 {
+    width: 9px;
+    background-color: var(--green-900);
+    height: 13rem;
+    border-radius: 0.3rem 0 0 0rem;
+    margin-right: 1rem;
+  }
   
+  .containerCaixa {
+    display: flex;
+    flex-direction: row;
+    background-color: var(--white);
+    border-radius: 0.3rem;
+    margin-top: 2rem;
+    gap: 5rem;
+  }
+
+  .tag3 {
+    width: 9px;
+    background-color: var(--green-900);
+    height: 23rem;
+    border-radius: 0rem 0 0 0.3rem;
+    margin-right: 1rem;
+  }
+  
+  .containerCaixa2 {
+    display: flex;
+    flex-direction: row;
+    background-color: var(--white);
+    margin-bottom: 1rem;
+    border-radius: 0.3rem;
+  }
+
+
+  .container1Relatorio {
+    display: flex;
+    gap: 7rem;   
+    margin-top: 3rem; 
+  }
+
+  .containerFaturamento{
+    display: flex;
+    flex-direction: column;
+
+    span{
+      margin-bottom: 2rem;
+    }
+  }
+
+  .containerSearch{
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    display: flex;
+    background-color: var(--gray-100);
+    flex-direction: row;
+    padding: 0.5rem;
+    width: 20rem;
+    height: 3rem;
+    border-radius: 0.3rem;
+  
+    input{
+      border: none;
+      width: 20rem;     
+      background-color: var(--gray-100);      
+      color: var(--white);
+    }
+
+    input::placeholder{
+      color: var(--white);
+    }
+  
+  
+    button{
+        background-color: var(--gray-100);
+        border: 0;
+        margin-left: 3rem;
+    }
+  
+  }

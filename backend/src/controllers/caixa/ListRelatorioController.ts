@@ -46,11 +46,11 @@ class ListRelatorioController {
       const valorAberto = parseFloat(caixa.valorAberto.toString());
 
       if (caixa.dataOperacao.getMonth() + 1 === mesAtual && caixa.dataOperacao.getFullYear() === anoAtual) {
-        const diferenca = Math.max(0, valorPlano - Math.max(valorAberto, 0)); // Evita valores negativos
+        const diferenca = Math.max(0, valorPlano - Math.max(valorAberto, 0)); 
         faturamentoMensalTemp += diferenca;
       }
 
-      const diferencaAnual = Math.max(0, valorPlano - Math.max(valorAberto, 0)); // Evita valores negativos
+      const diferencaAnual = Math.max(0, valorPlano - Math.max(valorAberto, 0)); 
       faturamentoAnualTemp += diferencaAnual;
 
       if (valorAberto > 0) {

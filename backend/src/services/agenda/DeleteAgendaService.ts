@@ -1,27 +1,27 @@
 import prismaClient from '../../prisma';
 
 class DeleteAgendaService {
-  async execute(clientId: string) {
-    if (!clientId) {
-      throw new Error("É necessário fornecer o ID do cliente para a exclusão.");
+  async execute(agendaId: string) {
+    if (!agendaId) {
+      throw new Error("É necessário fornecer o ID do agendamento para a exclusão.");
     }
 
-    const existingClient = await prismaClient.agenda.findUnique({
-      where: { id: clientId },
+    const existingAgenda = await prismaClient.agenda.findUnique({
+      where: { id: agendaId },
     });
 
-    if (!existingClient) {
-      throw new Error(`Não foi possível encontrar um cliente com o ID ${clientId}.`);
+    if (!existingAgenda) {
+      throw new Error(`Não foi possível encontrar um agendamento com o ID ${agendaId}.`);
     }
     
-    const client = await prismaClient.agenda.delete({
-      where: { id: clientId },
+    const agenda = await prismaClient.agenda.delete({
+      where: { id: agendaId },
     });
 
     console.log("Agendamento deletado com sucesso");
     
 
-    return client;
+    return agenda;
   }
 }
 

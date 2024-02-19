@@ -2,6 +2,7 @@ import prismaClient from '../../prisma';
 import { DateTime } from 'luxon';
 
 interface AgendaItem {
+  id: string;
   name: string;
   dataConsulta: string;
   horarioConsulta: string;
@@ -17,6 +18,7 @@ class ListProximaService {
     try {
       const agendas = await prismaClient.agenda.findMany({
         select: {
+          id: true,
           dataConsulta: true,
           horarioConsulta: true,
           sessoesContador: true,
@@ -53,6 +55,7 @@ class ListProximaService {
       });
 
           return {
+            id: agenda.id,
             name: agenda.client.name,
             dataConsulta: dataFormatada,
             horarioConsulta: horaFormatada,
