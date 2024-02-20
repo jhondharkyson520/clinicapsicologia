@@ -13,7 +13,7 @@ interface AgendaItem {
 
 class ListProximaService {
   async execute(): Promise<AgendaItem[]> {
-    const dataAtual = DateTime.local();
+    const dataAtual = DateTime.local().toISODate();
 
     try {
       const agendas = await prismaClient.agenda.findMany({
@@ -29,30 +29,19 @@ class ListProximaService {
               id: true,
             },
           },
-        },
+        },       
       });
-
-      console.log('Agendas from Prisma:', agendas);
-
-      const agendaItems: AgendaItem[] = agendas.map((agenda) => {
-        try {
-          const dataConsulta = DateTime.fromJSDate(agenda.dataConsulta);
-          const horarioConsulta = DateTime.fromJSDate(agenda.horarioConsulta);
-
-          if (!dataConsulta.isValid || !horarioConsulta.isValid) {
-            throw new Error('Invalid date or time value');
-          }
-
-              
-      const dataFormatada = new Date(agenda.dataConsulta).toLocaleDateString('pt-BR');
 
       
-      const horaFormatada = new Date(agenda.horarioConsulta).toLocaleTimeString('pt-BR', {
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: false,
-        timeZone: 'UTC', 
-      });
+      const agendaItems: AgendaItem[] = agendas.map((agenda) => {
+        try {
+          const dataFormatada = new Date(agenda.dataConsulta).toLocaleDateString('pt-BR');
+          const horaFormatada = new Date(agenda.horarioConsulta).toLocaleTimeString('pt-BR', {
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false,
+            timeZone: 'UTC',
+          });
 
           return {
             id: agenda.id,
@@ -75,11 +64,18 @@ class ListProximaService {
         if (!agenda) {
           return false;
         }
+      
+        
+        const dataConsultaFormatted = DateTime.fromFormat(agenda.dataConsulta, 'dd/MM/yyyy').toISODate();
+      
+        return dataConsultaFormatted === dataAtual;
 
-        const dataConsulta = DateTime.fromFormat(agenda.dataConsulta, 'dd/MM/yyyy');
+      }).sort((a, b) => {
 
-        return dataConsulta > dataAtual || dataConsulta.hasSame(dataAtual, 'day');
-      }) as AgendaItem[];
+        return DateTime.fromFormat(a.horarioConsulta, 'HH:mm').toMillis() - DateTime.fromFormat(b.horarioConsulta, 'HH:mm').toMillis();
+      
+      });
+      
 
       console.log('Filtered Agenda Items:', filteredAgendaItems);
 

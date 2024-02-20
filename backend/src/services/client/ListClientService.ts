@@ -12,7 +12,8 @@ class ListClientService{
                 tipoPlano: true,
                 valorPlano: true,
                 quantidadeSessoes: true,
-                situacao: true
+                situacao: true,
+                sessoesContador: true
             }
         })
 

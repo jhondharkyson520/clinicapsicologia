@@ -45,6 +45,11 @@
     font-size: 1.2rem;
     font-weight: bold;
     color: var(--white);
+    transition: transform 0.7s;
+    
+    &:hover{
+        transform: scale(1.05);
+    }
 }
 
 .containerSelects{

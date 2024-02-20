@@ -5,7 +5,7 @@ import { canSSRAuth } from "../..//utils/canSSRAuth";
 import { FiRefreshCcw, FiEdit2, FiSearch } from "react-icons/fi";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { setupAPIClient } from "@/services/api";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ClientEdit from "../clientedit";
 import Link from "next/link";
 import router from "next/router";
@@ -21,6 +21,7 @@ type ListProps = {
     valorPlano: number | string;
     quantidadeSessoes?: number;
     situacao: boolean;
+    sessoesContador: number;
 }
 
 
@@ -62,7 +63,8 @@ export default function ClientList({ clients }: ClientProps) {
 
       };
 
-
+     
+      
 
     return (
         <>
@@ -99,10 +101,11 @@ export default function ClientList({ clients }: ClientProps) {
                                 <th className={styles.tagCell}></th>
                                 <th className={styles.tableCell}>Nome</th>
                                 <th className={styles.tableCell}>Vencimento</th>
-                                    <th className={styles.tableCell}>Telefone</th>
+                                <th className={styles.tableCell}>Telefone</th>
                                 <th className={styles.tableCell}>Sessões</th>
-                                    <th className={styles.tableCell}>Valor Plano</th>
-                                <th className={styles.tableCell}>Situação</th>
+                                <th className={styles.tableCell}>Qtd. de sessões</th>
+                                <th className={styles.tableCell}>Valor Plano</th>
+                                <th className={styles.tableCell}>Situação</th>                                
                                 <th className={styles.tableCell}>Ações</th>
                             </tr>
                         </thead>
@@ -136,6 +139,8 @@ export default function ClientList({ clients }: ClientProps) {
                                                 <p style={{color: '#F13D49' }}>Plano mensal</p>
                                             )}
                                         </td>
+                                        <td className={styles.disableCell}>{client.sessoesContador}</td>
+
                                         <td className={styles.disableCell}>R${client.valorPlano}</td>
                                         <td>
                                             {client.situacao ? (

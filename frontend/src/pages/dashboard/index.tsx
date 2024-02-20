@@ -10,6 +10,8 @@ import router from "next/router";
 import { toast } from "react-toastify";
 import { FaList } from "react-icons/fa";
 import { TbBrandCashapp } from "react-icons/tb";
+import { MdOutlinePayments } from "react-icons/md";
+import { DateTime } from "luxon";
 
 
 type AgendaItem = {
@@ -31,9 +33,11 @@ interface RelatorioResponse {
     valoresAtrasados: number;
   }
 
-interface ClientAtraso{
-    id: string
-    name: string;
+  interface AtrasoItem {
+    client: {
+        id: string;
+        name: string;
+    };
     valorAberto: number;
 }
 
@@ -42,7 +46,24 @@ export default function AgendaList({ clients }: ClientProps) {
     const [searchTerm, setSearchTerm] = useState('');
 
     const [relatorioList, setRelatorioList] = useState<RelatorioResponse>();
-    const [atrasoList, setAtrasoList] = useState<ClientAtraso>();
+    const [atrasoList, setAtrasoList] = useState<AtrasoItem[]>([]);
+
+
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const apiClient = setupAPIClient();
+                const response = await apiClient.get('/caixa/atrasados');
+                setAtrasoList(response.data);
+            } catch (error) {
+                console.error('Erro ao buscar os dados:', error);
+            }
+        };
+
+        fetchData(); 
+    }, []);
+
 
     useEffect(() => {
     }, [clientList]);
@@ -57,29 +78,12 @@ export default function AgendaList({ clients }: ClientProps) {
             const response = await apiClient.get<RelatorioResponse>('/caixa/relatorio'); 
             setRelatorioList(response.data);
         } catch (error) {
-            console.error("Erro ao obter relatório financeiro:", error);
-            toast.error('Erro ao obter relatório financeiro!');
+            console.error(error);
         }
     };
 
    
-    useEffect(() => {
-        
-        fetchAtraso(); 
-    }, [atrasoList]);
-
-    
-
-    const fetchAtraso = async () => {
-        try {
-            const apiClient = setupAPIClient(); 
-            const response = await apiClient.get<ClientAtraso>('/caixa/atrasados'); 
-            setAtrasoList(response.data);
-        } catch (error) {
-            console.error("Erro ao obter lista de atrasos:", error);
-            toast.error('Erro ao obter lista de atrasos!');
-        }
-    };
+   
 
     
 
@@ -103,6 +107,10 @@ export default function AgendaList({ clients }: ClientProps) {
         const monthIndex = parseInt(month, 10) - 1;
         return months[monthIndex];
     };
+
+    function handleOpenCaixa() {
+        router.push(`/caixa`);
+      }
     
     const handleDelete = async(id: string) => {
         
@@ -139,6 +147,11 @@ export default function AgendaList({ clients }: ClientProps) {
         router.push(`/agenda`);
       }
       
+      const currentDateTime = DateTime.now();
+      const formattedCurrentDateTime = currentDateTime.setLocale('pt-BR').toLocaleString(DateTime.DATETIME_MED);
+
+      useEffect(() => {
+    }, [formattedCurrentDateTime]);
 
     return (
         <>
@@ -154,6 +167,7 @@ export default function AgendaList({ clients }: ClientProps) {
                         <button>
                             <FiRefreshCcw size={25} color="#3FBAC2" />
                         </button>
+                        <p className={styles.dataAtual}>Hoje é dia {formattedCurrentDateTime}</p>
                     </div>
 
                     <table className={styles.listClients}>
@@ -204,7 +218,7 @@ export default function AgendaList({ clients }: ClientProps) {
                     </table>
 
                     <div className={styles.containerHeader}>
-                        <h1><TbBrandCashapp size={28} color="#3FBAC2" />  Relatório Financeiro</h1>
+                        <h1><TbBrandCashapp size={28} color="#3FBAC2" />  Relatório financeiro</h1>
                         <button>
                             <FiRefreshCcw size={25} color="#3FBAC2" />
                         </button>
@@ -252,33 +266,47 @@ export default function AgendaList({ clients }: ClientProps) {
                                     onChange={(e) => setSearchTerm(e.target.value)}
 
                                 />
-                                <button>
-                                    <FiSearch size={25} color="#3FBAC2" />
-                                </button>
+                                    <FiSearch size={30} color="#3FBAC2" />
+                                
                             </div>
 
                             <table className={styles.listClients}>
-                                <thead>
-                                    <tr>
-                                        <th className={styles.tagCell}></th>
-                                        <th className={styles.tableCell}>Nome</th>
-                                        <th className={styles.tableCell}>Valor em aberto</th>  
-                                    </tr>
-                                </thead>
-                                <tbody>                                    
-                                            <tr  className={styles.orderClient}>
-                                                <td className={styles.tagCell}>
-                                                    <div className={styles.tag}></div>
-                                                </td>
-                                                <td className={`${styles.tableCell} ${styles.nameCell}`}>
-                                                    {atrasoList?.name}
-                                                </td>
-                                                <td className={styles.tableCell}>
-                                                    {atrasoList?.valorAberto}
-                                                </td>                                                
-                                            </tr>
-                                        
-                                </tbody>
+                            <thead>
+                                <tr>
+                                <th className={styles.tagCell}></th>
+                                <th className={styles.tableCell}>Nome</th>
+                                <th className={styles.tableCell}>Valor em aberto</th>
+                                <th className={styles.tableCell}>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {atrasoList
+                                    .filter((index) =>
+                                        index.client.name.toLowerCase().includes(searchTerm.toLowerCase())
+                                    )
+                                .map((item, index) => (
+                                <tr key={index} className={styles.orderClient}>
+                                    <td className={styles.tagCell}>
+                                    <div className={styles.tag}></div>
+                                    </td>
+                                    <td className={`${styles.tableCell} ${styles.nameCell}`}>
+                                    {item.client.name}
+                                    </td>
+                                    <td className={styles.tableCell} style={{ color: '#FF0A0A' }}>
+                                    {item.valorAberto}
+                                    </td>
+                                    <td className={`${styles.tableCell} ${styles.buttonCell}`}>
+                                            <button
+                                                onClick={() => handleOpenCaixa()}
+                                                className={styles.buttonEdit}
+                                            >
+                                                Realizar pagamento
+                                                <MdOutlinePayments size={17} color="#099C3A" />
+                                            </button>                                           
+                                        </td>
+                                </tr>
+                                ))}
+                            </tbody>
                             </table>
 
                         </div>
