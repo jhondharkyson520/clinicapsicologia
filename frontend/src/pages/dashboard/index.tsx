@@ -62,7 +62,7 @@ export default function AgendaList({ clients }: ClientProps) {
         };
 
         fetchData(); 
-    }, []);
+    }, [atrasoList]);
 
 
     useEffect(() => {

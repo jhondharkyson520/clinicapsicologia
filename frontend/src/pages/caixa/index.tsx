@@ -15,6 +15,7 @@ interface Client {
   valorPlano: string;
   valorAberto: string;
   situacao: boolean;
+  planoFamiliar: string;
 }
 
 interface Caixa {
@@ -35,7 +36,6 @@ export default function Caixa() {
   const [valor, setValor] = useState('');
   const [valorEmAberto, setValorEmAberto] = useState('R$ 0,00');  
   const [valorPlano, setValorPlano] = useState<Number>();
-
 
    
   
@@ -70,11 +70,13 @@ export default function Caixa() {
           valorAberto *= -1;
         }
         
-        setValorEmAberto(`R$ ${valorAberto.toFixed(2)}`);
+        setValorEmAberto(`R$ ${valorAberto.toFixed(2)}`);       
+            
+            const responseClient = await apiClient.get(`/client/detail/${clientId}`);
+            const clientDetails = responseClient.data;
+            const situacaoCliente = clientDetails.situacao;         
         
-        const { situacao } = getSaldoStatus(valorAberto.toString());
-        
-        setSelectedClient({ ...selectedClient!, situacao, id: clientId, valorPlano: latestCaixa.valorPlano });
+        setSelectedClient({ ...selectedClient!,situacao: situacaoCliente, id: clientId, valorPlano: latestCaixa.valorPlano });
       } else {
         setValorEmAberto('R$ 0.00');
       }
@@ -89,6 +91,7 @@ export default function Caixa() {
     try {
       const apiClient = setupAPIClient();
       const response = await apiClient.get("/clientlist");
+      //console.log("Dados dos clientes:", response.data);
       setClients(response.data);
     } catch (error) {
       toast.error('Erro ao buscar clientes cadastrados!');
@@ -120,7 +123,9 @@ export default function Caixa() {
 
       const valorAberto = parseFloat(clientDetails.valorAberto);
       const valorPlanoFloat = parseFloat(clientDetails.valorPlano); // Convertendo para float
-      const situacaoCliente = isNaN(valorAberto) ? false : valorAberto > 0 ? false : true;
+      const situacaoCliente = clientDetails.situacao;
+      
+      
 
       setSelectedClient({ ...clientDetails, situacao: situacaoCliente, valorPlano: valorPlanoFloat.toFixed(2) }); // Aplicando a formatação
 
@@ -214,7 +219,8 @@ export default function Caixa() {
         name: '',
         valorPlano: '0.00',
         valorAberto: '0.00',
-        situacao: false
+        situacao: true,
+        planoFamiliar: null || ''
       });
     } catch (error) {
       //console.error('Erro ao realizar o lançamento:', error);
@@ -235,19 +241,22 @@ export default function Caixa() {
 
 
   const textoSituacao = () => {
-    const valorAbertoString = valorEmAberto.replace(/[^\d.-]/g, ''); // Remover todos os caracteres não numéricos
-    let valorAberto = parseFloat(valorAbertoString); 
-    //console.log(valorAberto);
-  
-    const situacao = valorAberto > 0 ? 'Pago' : 'Vencido';
-    return situacao;
+    
+    
+    if(selectedClient?.situacao == true){
+      return 'Pago';
+    }else{
+      return 'Vencido'
+    }
   };
+
+  
   
 
   return (
     <>
       <Head>
-        <title>Clientes cadastrados - SGCP</title>
+        <title>Caixa - SGCP</title>
       </Head>
       <div>
         <Header />
@@ -272,13 +281,15 @@ export default function Caixa() {
                   }}
                 >
                   <option value="">Selecione o cliente</option>
-                  {clients.map((client) => (
-                    <option key={client.id} value={client.id}>
-                      {client.name}
-                    </option>
-                  ))}
+                  {clients
+                    .filter(client => client.planoFamiliar !== 'Dependente')
+                    .map((client) => (
+                      <option key={client.id} value={client.id}>
+                        {client.name}
+                      </option>
+                    ))}
                 </select>
-              </div>
+                              </div>
 
               <div className={styles.itemsForm}>
                 <MdDateRange size={25} className={styles.iconsInput} />
