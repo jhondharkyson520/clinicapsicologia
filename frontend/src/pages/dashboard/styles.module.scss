@@ -20,6 +20,31 @@
     .buttonDelete {
       font-size: 0.8rem; 
     }
+
+    .container1Relatorio{
+      display: flex;
+      flex-direction: column;
+    }
+
+    .containerHeader{
+      display: flex;
+      flex-direction: row;
+      margin-bottom: 2rem;
+      margin-top: 2rem;
+  
+      button{
+          background-color: transparent;
+          border: 0;
+          margin-left: 1rem;
+      }
+
+      .dataAtual{
+        margin-left: 1rem;
+        margin-top: 2rem;
+      }
+  
+  }
+
   }
 
 .container h1{

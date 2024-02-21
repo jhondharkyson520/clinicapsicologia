@@ -346,7 +346,7 @@ export default function Caixa() {
               
 
               <button className={styles.buttonConfirm} type="button" onClick={handleLancamento}>
-                {selectedClient && selectedClient.situacao ? 'Pago' : 'Marcar como pago'}
+                Efetuar lançamento
               </button>
             </form>
           </div>
