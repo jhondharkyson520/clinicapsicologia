@@ -1,14 +1,53 @@
-import React from "react";
-import { Text, View, StyleSheet, TextInput, TouchableOpacity, Image } from "react-native";
-import * as Animatable from 'react-native-animatable'
+import React, {useState, useContext, useEffect} from "react";
+import { Text, View, StyleSheet, TextInput, TouchableOpacity, Image, Platform, Keyboard } from "react-native";
+import * as Animatable from 'react-native-animatable';
+import { AuthContext } from "../../contexts/AuthContext";
 
 export default function SignIn(){
+    const { signIn } = useContext(AuthContext)
+
+    const [ email, setEmail ] = useState('');
+    const [ password, setPassword ] = useState('');
+    const [keyboardVisible, setKeyboardVisible] = useState(false);
+
+    useEffect(() => {
+        const keyboardDidShowListener = Keyboard.addListener(
+            Platform.OS === "android" ? "keyboardDidShow" : "keyboardWillShow",
+            () => {
+                setKeyboardVisible(true);
+            }
+        );
+        const keyboardDidHideListener = Keyboard.addListener(
+            Platform.OS === "android" ? "keyboardDidHide" : "keyboardWillHide",
+            () => {
+                setKeyboardVisible(false);
+            }
+        );
+
+        return () => {
+            keyboardDidShowListener.remove();
+            keyboardDidHideListener.remove();
+        };
+    }, []);
+
+    async function handleLogin(){
+        
+        if( email === '' || password === '' ){
+            return;
+        }
+
+        await signIn({email, password});
+
+    }
+
     return(
 
         <View style={styles.container} >
+            {!keyboardVisible && (
             <Animatable.View animation='fadeInLeft' delay={500} style={styles.containerHeader}>
                 <Text style={styles.message}>Bem vindo(a)!</Text>
             </Animatable.View>
+            )}
 
             <Animatable.View animation='fadeInUp' style={styles.containerForm}>
 
@@ -21,15 +60,22 @@ export default function SignIn(){
                 <TextInput
                     placeholder="Digite seu email"
                     style={styles.input}
+                    value={email}
+                    onChangeText={setEmail}
+                    autoCapitalize="none"
                 />
 
                 <Text style={styles.title}>Senha</Text>
                 <TextInput
                     placeholder="Digite sua senha"
                     style={styles.input}
+                    secureTextEntry={true}
+                    value={password}
+                    onChangeText={setPassword}
+                    autoCapitalize="none"
                 />
 
-                <TouchableOpacity style={styles.button}>
+                <TouchableOpacity style={styles.button} onPress={handleLogin} >
                     <Text style={styles.buttonText}>Acessar</Text>
                 </TouchableOpacity>
 
