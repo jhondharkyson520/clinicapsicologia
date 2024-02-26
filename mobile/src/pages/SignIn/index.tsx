@@ -1,10 +1,11 @@
 import React, {useState, useContext, useEffect} from "react";
-import { Text, View, StyleSheet, TextInput, TouchableOpacity, Image, Platform, Keyboard } from "react-native";
+import { Text, View, StyleSheet, TextInput, TouchableOpacity, Image, Platform, Keyboard, ActivityIndicator } from "react-native";
 import * as Animatable from 'react-native-animatable';
 import { AuthContext } from "../../contexts/AuthContext";
 
+
 export default function SignIn(){
-    const { signIn } = useContext(AuthContext)
+    const { signIn, loadingAuth } = useContext(AuthContext)
 
     const [ email, setEmail ] = useState('');
     const [ password, setPassword ] = useState('');
@@ -76,7 +77,12 @@ export default function SignIn(){
                 />
 
                 <TouchableOpacity style={styles.button} onPress={handleLogin} >
-                    <Text style={styles.buttonText}>Acessar</Text>
+                    { loadingAuth ? (
+                        <ActivityIndicator size={25} color='#f1f1f1' />
+                    ) : (
+                        <Text style={styles.buttonText}>Acessar</Text>
+                    )}
+                    
                 </TouchableOpacity>
 
             </Animatable.View>
