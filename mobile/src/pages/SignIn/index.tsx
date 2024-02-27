@@ -1,7 +1,8 @@
 import React, {useState, useContext, useEffect} from "react";
-import { Text, View, StyleSheet, TextInput, TouchableOpacity, Image, Platform, Keyboard, ActivityIndicator } from "react-native";
+import { Text, View, StyleSheet, TextInput, TouchableOpacity, Image, Platform, Keyboard, ActivityIndicator, Alert } from "react-native";
 import * as Animatable from 'react-native-animatable';
 import { AuthContext } from "../../contexts/AuthContext";
+import Toast from "react-native-toast-message";
 
 
 export default function SignIn(){
@@ -34,11 +35,24 @@ export default function SignIn(){
     async function handleLogin(){
         
         if( email === '' || password === '' ){
-            return;
+            return(
+                Toast.show({
+                    type: 'error',
+                    text1: 'Preencha todos os campos!',
+                    position: 'top',
+                })
+            );
         }
 
-        await signIn({email, password});
-
+        const signInSuccess = await signIn({email, password});
+    
+        if (!signInSuccess) {
+            Toast.show({
+                type: 'error',
+                text1: 'Usuário ou senha incorretos!',
+                position: 'top',
+            });
+        }
     }
 
     return(

@@ -6,7 +6,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 type AuthContextData = {
     user: UserProps;
     isAuthenticated: boolean;
-    signIn: (credentials: SignInProps) => Promise<void>;
+    signIn: (credentials: SignInProps) => Promise<boolean>;
     loadingAuth: boolean;
     loading: boolean;
     signOut: () => Promise<void>;
@@ -65,7 +65,7 @@ export function AuthProvider({children}: AuthProviderProps){
 
     }, [])
 
-    async function signIn({email, password}: SignInProps){
+    async function signIn({email, password}: SignInProps): Promise<boolean>{
         setLoadingAuth(true);
         
         try{
@@ -86,9 +86,12 @@ export function AuthProvider({children}: AuthProviderProps){
             setUser({ id, name, email, token });
             setLoadingAuth(false);
 
+            return true;
+
         }catch(err){
             console.log('Erro ao acessar', err);
-            setLoadingAuth(false);            
+            setLoadingAuth(false); 
+            return false;           
         }
         
     }
