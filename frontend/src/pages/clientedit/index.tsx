@@ -2,12 +2,15 @@ import Head from "next/head";
 import { Header } from "@/components/Header";
 import styles from './styles.module.scss';
 import { canSSRAuth } from "@/utils/canSSRAuth";
-import { FormEvent, useEffect, useRef, useState } from "react";
+import { FormEvent, InputHTMLAttributes, ReactHTMLElement, useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import { setupAPIClient } from "@/services/api";
 import InputMask from 'react-input-mask';
 import { DateTime } from 'luxon';
 import { useRouter } from "next/router";
+import ptBR from 'date-fns/locale/pt-BR';
+import DatePicker from 'react-datepicker';
+import { useListOpen } from "@/providers/ListOpenContext";
 
 interface Props {
   id: string;
@@ -36,20 +39,12 @@ export default function ClientEdit({ id }: Props){
     const [camposFaltando, setCamposFaltando] = useState<string[]>([]);
     const router = useRouter();
 
-    const formatDate = (date:any) => {
-      return new Date(date).toLocaleDateString("pt-BR");
-      //tentar converter de outra maneira, pois ao apagar os dados do input, 
-      //o dataV fica como vazio, e talvez por isso não digita
-      //quando deixa só o dataV a data fica desformatada, porem funciona
-      
-  };
-
+    
     useEffect(() => {
       
       const clientId = router.query.id as string;
       setIdClient(clientId);
-      console.log(clientId);
-      
+      //console.log(clientId);     
   
       const fetchClientData = async () => {
         try {
@@ -72,8 +67,7 @@ export default function ClientEdit({ id }: Props){
           setSituacao(clientData.situacao);
           
         } catch (error) {
-          console.log('Erro ao buscar dados do cliente:', error);
-          
+          toast.error('Erro ao buscar dados do cliente');        
           
         }
       };
@@ -105,7 +99,6 @@ export default function ClientEdit({ id }: Props){
 
       };
       
-      console.log(valor);
       
       
       
@@ -129,76 +122,69 @@ export default function ClientEdit({ id }: Props){
    
 
     async function handleRegister(event: FormEvent) {
-        event.preventDefault();
-
-        const camposFaltando: string[] = [];
+      event.preventDefault();
+          
+      const camposFaltando: string[] = [];
 
       if (name === '') camposFaltando.push('Nome');
       if (email === '') camposFaltando.push('Email');
       if (cpf === '') camposFaltando.push('CPF');
       if (telefone === '') camposFaltando.push('Telefone');
       if (endereco === '') camposFaltando.push('Endereço');
-      if (valor === '') camposFaltando.push('Valor do Plano');
+      if (valorMask === '') camposFaltando.push('Valor do Plano');
       if (quantidade === '') camposFaltando.push('Quantidade de Sessões');
       if (tipoPlano === '') camposFaltando.push('Tipo do Plano');
       if (tipoPacote === '') camposFaltando.push('Tipo do Pacote');
-
+    
       if (camposFaltando.length > 0) {
-
         camposFaltando.forEach((campo) => {
           toast.error(`O campo '${campo}' é obrigatório.`);
         });
-
-        
         return;
       }
-
+    
+      try {
         
-        try {
-                    
-          const formattedDataVencimento = dataV ? DateTime.fromFormat(dataV, 'dd/MM/yyyy').toISO() : null;
-    
-          const data = new FormData();
-    
-          if (formattedDataVencimento && tipoPacote === 'Mensal') {
-            data.append('dataVencimento', formattedDataVencimento);
-          }
-    
+        const dataVencimentoFormatted = selectedDate ? selectedDate.toLocaleDateString('pt-BR') : null;
+        
           const requestData = {
-            id,
-            name,
-            email,
-            cpf,
-            telefone,
-            endereco,
-            tipoPlano,
-            planoFamiliar,
-            dataVencimento: dataV,
-            valorPlano: parseFloat(valor),
-            quantidadeSessoes: parseInt(quantidade, 10),
-            situacao,
-          };
-
-          const apiClient = setupAPIClient();
-          await apiClient.put(`/client/update/${idClient}`, requestData);
-          
-          
-  
+          id: idClient, 
+          name,
+          email,
+          cpf,
+          telefone,
+          endereco,
+          tipoPlano,
+          planoFamiliar,
+          dataVencimento: dataVencimentoFormatted, 
+          valorPlano: parseFloat(valor),
+          quantidadeSessoes: parseInt(quantidade, 10),
+          situacao,
+        };
     
-          toast.success('Cliente atualizado com sucesso');
-          
+        const apiClient = setupAPIClient();
+        const response = await apiClient.put(`/client/update/${idClient}`, requestData); 
+        toast.success('Cliente atualizado com sucesso');
+        router.push('/clientlist');
 
-  
-         router.push('/clientlist');
-        } catch (error) {          
-          console.log('Erro ao atualizar cliente:', error);
-          toast.error('Erro ao atualizar cliente');
-        }
-      
-
-    
-        
+      } catch (error) {
+        //console.log('Erro ao atualizar cliente:', error);
+        toast.error('Erro ao atualizar cliente');
+      }
     }
+
+    const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
+    const [isDatePickerOpen, setDatePickerOpen] = useState(false);
+
+    const handleDateChange = (date: Date | null) => {
+      setSelectedDate(date);
+    };
+
+    useEffect(() => {
+      setValor(valorMask);
+    }, [selectedDate]);
+
+    const { listOpen } = useListOpen();
   
 
     
@@ -214,13 +200,15 @@ export default function ClientEdit({ id }: Props){
                 <h1>Editar dados do Cliente</h1>
 
                 <form className={styles.form}  onSubmit={handleRegister}>
-                    <input 
-                        type="text"
-                        placeholder="Nome"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)} 
-                    />
-
+                      
+                    
+                      <input 
+                          type="text"
+                          placeholder="Nome"
+                          value={name}
+                          onChange={(e) => setName(e.target.value)} 
+                      />
+                      
                     <input 
                         type="email"
                         placeholder="Email"
@@ -283,16 +271,26 @@ export default function ClientEdit({ id }: Props){
                         </select>
                     </div>
 
-                    {tipoPacote === 'Sessões' ? <></> : 
-                      <InputMask 
-                          mask="99/99/9999" 
-                          placeholder="Data vencimento"
-                          value={formatDate(dataV)}
-                          onChange={(e) => setDataV(e.target.value)}
-                          
-                      />
-                    }
-                    
+                    {listOpen || tipoPacote === 'Sessões' ? <></> : 
+                      
+                        <DatePicker
+                          selected={selectedDate}
+                          onChange={handleDateChange}
+                          dateFormat="dd/MM/yyyy"
+                          placeholderText="Informe a data"
+                          showYearDropdown
+                          yearDropdownItemNumber={15}
+                          scrollableYearDropdown
+                          className={`${styles.datePicker} ${
+                            isDatePickerOpen ? styles.datePickerOpen : ''
+                          }`}
+                          onFocus={() => setDatePickerOpen(true)}
+                          onBlur={() => setDatePickerOpen(false)}
+                          open={isDatePickerOpen}
+                          locale="ptBR"
+                        />
+                                     
+                    }                    
 
                     <input
                       placeholder="Valor plano"

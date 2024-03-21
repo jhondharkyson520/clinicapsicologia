@@ -19,6 +19,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import DatePicker from 'react-datepicker';
 import ptBR from 'date-fns/locale/pt-BR';
 import { toast } from "react-toastify";
+import { useListOpen } from "@/providers/ListOpenContext";
 
 
 
@@ -66,7 +67,8 @@ export default function Agenda() {
       const response = await apiClient.get("/clientlist");
       setClients(response.data);
     } catch (error) {
-      console.error("Erro ao buscar clientes:", error);
+      toast.error('Erro ao buscar clientes');
+      //console.error("Erro ao buscar clientes:", error);
     }
   };
 
@@ -75,32 +77,24 @@ export default function Agenda() {
       const apiClient = setupAPIClient();
       const response = await apiClient.get("/agendalist");
   
-      console.log("Resposta do servidor:", response.data);
-
-      
+      //console.log("Resposta do servidor:", response.data);      
   
       const formattedEvents = response.data.map((agendaItem: any) => {
-        console.log("Data e Hora Consulta:", agendaItem.dataConsulta, agendaItem.horarioConsulta);
-  
-        // Convertendo data para objeto DateTime
+        //console.log("Data e Hora Consulta:", agendaItem.dataConsulta, agendaItem.horarioConsulta);
+
         const dataConsulta = DateTime.fromFormat(agendaItem.dataConsulta, 'dd/MM/yyyy');
-  
-        // Separando horas e minutos
+
         const [hour, minute] = agendaItem.horarioConsulta.split(':');
   
-        // Criando objeto Date com ano, mês, dia, hora e minuto
         const horarioConsulta = new Date(
           dataConsulta.year,
-          dataConsulta.month - 1, // Mês no JavaScript é baseado em zero
+          dataConsulta.month - 1, 
           dataConsulta.day,
           parseInt(hour),
           parseInt(minute)
         );
   
-        // Formatando manualmente a hora com minutos
         const horaFormatada = `${hour}:${minute.padStart(2, '0')}`;
-  
-        // Combinando duas informações no título
         const title = `${horaFormatada}  -  ${agendaItem.client.name}`;
   
         return {
@@ -110,20 +104,16 @@ export default function Agenda() {
         };
       });
   
-      console.log("Eventos formatados:", formattedEvents);
+      //console.log("Eventos formatados:", formattedEvents);
   
       setEvents(formattedEvents);
       setAgenda(response.data);
     } catch (error) {
-      console.error("Erro ao buscar agendas:", error);
+      toast.error('Erro ao buscar agendamentos');
+      //console.error("Erro ao buscar agendas:", error);
     }
   };
   
-  
-  
-  
-  
-
   const handleDateChange = (date: Date | null) => {
     setSelectedDate(date);
   };
@@ -139,73 +129,54 @@ export default function Agenda() {
       const apiClient = setupAPIClient();
   
       if (!selectedClientId) {
-        console.error('Selecione um cliente antes de agendar.');
+        //console.error('Selecione um cliente antes de agendar.');
         toast.error('Selecione um cliente antes de agendar!');
         return;
       }
       
 
       const selectedDateFormatted = selectedDate ? selectedDate.toLocaleDateString('pt-BR') : '';
-const selectedTimeWithoutColon = selectedTime.replace(':', '');
+      const selectedTimeWithoutColon = selectedTime.replace(':', '');
 
-const dateTimeString = `${selectedDateFormatted} ${selectedTimeWithoutColon}`;
-console.log('String de data e hora:', `${selectedDateFormatted} ${selectedTimeWithoutColon}`);
+      const dateTimeString = `${selectedDateFormatted} ${selectedTimeWithoutColon}`;
+      //console.log('String de data e hora:', `${selectedDateFormatted} ${selectedTimeWithoutColon}`);
 
-// Criar dataHoraLuxon no mesmo fuso horário da horaAtual
-const dataHoraLuxon = DateTime.fromFormat(
-  `${selectedDateFormatted} ${selectedTimeWithoutColon}`, 
-  'dd/MM/yyyy HHmm', 
-  { zone: 'America/Sao_Paulo' }
-);
+      const dataHoraLuxon = DateTime.fromFormat(
+        `${selectedDateFormatted} ${selectedTimeWithoutColon}`, 
+        'dd/MM/yyyy HHmm', 
+        { zone: 'America/Sao_Paulo' }
+      );
 
-const horaAtual = DateTime.now().setZone('America/Sao_Paulo');
+      const horaAtual = DateTime.now().setZone('America/Sao_Paulo');
 
-console.log('DataHoraLuxon', dataHoraLuxon);
-console.log('HoraAtual', horaAtual);
+      const diff = dataHoraLuxon.diff(horaAtual, 'minutes');
+      const diffInMinutes = diff?.toObject().minutes;
 
-const diff = dataHoraLuxon.diff(horaAtual, 'minutes');
-const diffInMinutes = diff?.toObject().minutes;
+      if (diffInMinutes !== undefined && diffInMinutes <= 0) {
+        //console.log('Não é possível fazer agendamentos passados ou na mesma data e hora atual');
+        toast.error('Não é possível fazer agendamentos passados ou na mesma data e hora atual!');
+        return;
+      }         
 
-if (diffInMinutes !== undefined && diffInMinutes <= 0) {
-  console.log('Não é possível fazer agendamentos passados ou na mesma data e hora atual');
-  toast.error('Não é possível fazer agendamentos passados ou na mesma data e hora atual!');
-  return;
-}
-
-      
-      
-      
-      
-      
-
-    
-    
-    
-     
-     
      const formattedDate = selectedDate ? selectedDate.toLocaleDateString('pt-BR') : '';
 
-      
      const agendamentoData = {
       dataConsulta: formattedDate,
       horarioConsulta: selectedTime,
       client_id: selectedClientId,
       sessoesContador: 1,
     };
-      console.log(agendamentoData);
-      
-  
+
       const response = await apiClient.post("/agenda", agendamentoData);
-      
-      
+
       setSelectedTime('');
       setSelectedClientId('');
       setSelectedDate(null);
   
-      console.log("Agendamento bem-sucedido:", response.data);
+      //console.log("Agendamento bem-sucedido:", response.data);
       toast.success('Horário marcado com sucesso!');
     } catch (error) {
-      console.error("Erro ao agendar:", error);
+      //console.error("Erro ao agendar:", error);
       toast.error('Já existe um agendamento para a mesma data e horário.');
       setSelectedTime('');      
       setSelectedClientId('');
@@ -226,11 +197,11 @@ if (diffInMinutes !== undefined && diffInMinutes <= 0) {
   function renderEventContent(eventInfo:any) {
     const { title } = eventInfo.event;
 
-  // Estilização personalizada para cada evento
+ 
   const eventStyle: React.CSSProperties = {
     padding: '8px',
-    backgroundColor: getRandomColor(), // Use a função para obter uma cor aleatória
-    color: '#fff', // Cor do texto
+    backgroundColor: getRandomColor(), 
+    color: '#fff', 
     borderRadius: '4px',
     cursor: 'pointer',
     display: 'flex'
@@ -243,14 +214,20 @@ if (diffInMinutes !== undefined && diffInMinutes <= 0) {
   );
   }
 
+  const { listOpen } = useListOpen();
+
   return (
     <>
+    
       <Head>
         <title>Clientes cadastrados - SGCP</title>
       </Head>
+      
       <div>
         <Header />
+        {listOpen ? <></> : 
         <main className={styles.container}>
+        
           <div className={styles.containerHeader}>
             <h1>Realizar agendamentos</h1>
           </div>
@@ -274,23 +251,25 @@ if (diffInMinutes !== undefined && diffInMinutes <= 0) {
               
             <div className={styles.inputDateHour}>
               
-              <div className={styles.datePickerContainer}>
-              <HiOutlineCalendar size={25} className={styles.iconsInputCalendar}/>
-                <DatePicker
-                  selected={selectedDate}
-                  onChange={(date: Date) => handleDateChange(date)}
-                  dateFormat="dd/MM/yyyy"
-                  placeholderText="Informe a data"
-                  showYearDropdown
-                  yearDropdownItemNumber={15}
-                  scrollableYearDropdown
-                  className={`${styles.datePicker} ${isDatePickerOpen ? styles.datePickerOpen : ''}`}
-                  onFocus={() => setDatePickerOpen(true)}
-                  onBlur={() => setDatePickerOpen(false)}
-                  open={isDatePickerOpen}
-                  locale={ptBR}
-                />
-              </div>
+              
+                <div className={styles.datePickerContainer}>
+                <HiOutlineCalendar size={25} className={styles.iconsInputCalendar}/>
+                  <DatePicker
+                    selected={selectedDate}
+                    onChange={(date: Date) => handleDateChange(date)}
+                    dateFormat="dd/MM/yyyy"
+                    placeholderText="Informe a data"
+                    showYearDropdown
+                    yearDropdownItemNumber={15}
+                    scrollableYearDropdown
+                    className={`${styles.datePicker} ${isDatePickerOpen ? styles.datePickerOpen : ''}`}
+                    onFocus={() => setDatePickerOpen(true)}
+                    onBlur={() => setDatePickerOpen(false)}
+                    open={isDatePickerOpen}
+                    locale={ptBR}
+                  />
+                </div>
+              
                 
                 
               <HiOutlineClock size={25} className={styles.iconsInputClock}/>
@@ -372,8 +351,11 @@ if (diffInMinutes !== undefined && diffInMinutes <= 0) {
               )}
             </div>            
             </div>
+        
         </main>
+      }
       </div>
+      
     </>
   );
 }

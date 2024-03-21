@@ -1,5 +1,3 @@
-// SeuComponente.jsx
-
 import styles from './styles.module.scss';
 import Link from 'next/link';
 import { FiLogOut } from 'react-icons/fi';
@@ -7,10 +5,11 @@ import { AuthContext } from '@/contexts/AuthContext';
 import { useContext, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { useListOpen } from '@/providers/ListOpenContext';
 
 export function Header() {
   const { signOut } = useContext(AuthContext);
-  const [listOpen, setListOpen] = useState(false);
+  const { listOpen, setListOpen } = useListOpen();
 
   const toggleList = () => {
     setListOpen(!listOpen);
@@ -22,7 +21,6 @@ export function Header() {
 
   const closeListAndNavigate = () => {
     closeList();
-    // Adicione qualquer lógica de navegação ou outras ações aqui
   };
 
   return (

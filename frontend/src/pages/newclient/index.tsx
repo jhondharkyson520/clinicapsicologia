@@ -7,6 +7,10 @@ import { toast } from "react-toastify";
 import { setupAPIClient } from "@/services/api";
 import InputMask from 'react-input-mask';
 import { DateTime } from 'luxon';
+import { useListOpen } from "@/providers/ListOpenContext";
+import ptBR from 'date-fns/locale/pt-BR';
+import DatePicker from 'react-datepicker';
+import router from "next/router";
 
 
 
@@ -52,9 +56,7 @@ export default function NewClient(){
 
         setValor(formattedValue); 
         setValorMask(formattedValueWithSymbol);                   
-      };
-      console.log(valor);
-      
+      };     
       
       
 
@@ -121,10 +123,11 @@ export default function NewClient(){
     
           const apiClient = setupAPIClient();
           await apiClient.post('/client', requestData);
+          router.push('/newclient');
     
           toast.success('Cliente cadastrado com sucesso');
         } catch (err) {
-          console.error(err);
+          //console.error(err);
           if (err instanceof Error) {
             toast.error(err.message);
           } else {
@@ -147,6 +150,20 @@ export default function NewClient(){
         setTipoPacote('');
     }
 
+    const { listOpen } = useListOpen();
+
+    const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
+    const [isDatePickerOpen, setDatePickerOpen] = useState(false);
+
+    const handleDateChange = (date: Date | null) => {
+      setSelectedDate(date);
+    };
+
+    useEffect(() => {
+      console.log('SGCP');
+      
+    }, [selectedDate]);
+
     return(
         <>
         <Head>
@@ -154,7 +171,7 @@ export default function NewClient(){
         </Head>
         <div>
             <Header/>
-
+            {listOpen ? <></> : 
             <main className={styles.container}>
                 <h1>Novo Cliente</h1>
 
@@ -227,13 +244,27 @@ export default function NewClient(){
                         </select>
                     </div>
 
-                    <InputMask 
-                        mask="99/99/9999" 
-                        placeholder="Data vencimento"
-                        value={dataV}
-                        onChange={(e) => setDataV(e.target.value)}
-                        disabled={dataVencimentoDisabled}
-                    />
+
+                    {tipoPacote ===  'Sessões' ? <></> : 
+                      
+                      <DatePicker
+                        selected={selectedDate}
+                        onChange={handleDateChange}
+                        dateFormat="dd/MM/yyyy"
+                        placeholderText="Informe a data"
+                        showYearDropdown
+                        yearDropdownItemNumber={15}
+                        scrollableYearDropdown
+                        className={`${styles.datePicker} ${
+                          isDatePickerOpen ? styles.datePickerOpen : ''
+                        }`}
+                        onFocus={() => setDatePickerOpen(true)}
+                        onBlur={() => setDatePickerOpen(false)}
+                        open={isDatePickerOpen}
+                        locale="ptBR"
+                      />
+                                   
+                    }                  
                     
 
                     <input
@@ -254,6 +285,7 @@ export default function NewClient(){
                     </button>
                 </form>
             </main>
+            }
         </div>
         </>
     )

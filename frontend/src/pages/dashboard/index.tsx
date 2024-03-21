@@ -57,7 +57,8 @@ export default function AgendaList({ clients }: ClientProps) {
                 const response = await apiClient.get('/caixa/atrasados');
                 setAtrasoList(response.data);
             } catch (error) {
-                console.error('Erro ao buscar os dados:', error);
+                //console.error('Erro ao buscar os dados:', error);
+                toast.error('Erro ao carregar Painel');
             }
         };
 
@@ -78,7 +79,8 @@ export default function AgendaList({ clients }: ClientProps) {
             const response = await apiClient.get<RelatorioResponse>('/caixa/relatorio'); 
             setRelatorioList(response.data);
         } catch (error) {
-            console.error(error);
+            //console.error(error);
+            toast.error('Erro ao buscar relatorio de caixa')
         }
     };
 
