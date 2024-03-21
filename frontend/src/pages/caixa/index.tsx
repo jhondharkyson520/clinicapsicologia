@@ -194,22 +194,13 @@ export default function Caixa() {
   
       const apiClient = setupAPIClient();
   
-      const response = await apiClient.post('/lancamento', {
+      await apiClient.post('/lancamento', {
         client_id: selectedClientId,
         valorPago: parseFloat(valor),
       });
-  
-      //console.log('Resposta da API:', response.data);
-      //console.log('Lançamento bem-sucedido!');
-      toast.success('Lançamento bem-sucedido!');
-  
-      const situacaoCliente = valorEmAberto.includes('-') ? false : true;
-      const updateResponse = await apiClient.put(`/client/update/${selectedClientId}`, {
-        situacao: situacaoCliente,
-      });
-  
-      //console.log('Resposta do update do cliente:', updateResponse.data);
-  
+
+      toast.success('Lançamento bem-sucedido!'); 
+      
       setSelectedClientId('');
       setSelectedClient(null);
       setValorEmAberto('');

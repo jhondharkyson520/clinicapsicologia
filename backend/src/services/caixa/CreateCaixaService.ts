@@ -34,7 +34,9 @@ class CreateCaixaService {
 
     await prismaClient.clients.update({
       where: { id: client_id },
-      data: { situacao: situacao },
+      data: { 
+        situacao: situacao
+      },
     });
 
     const caixa = await prismaClient.caixa.create({

@@ -36,6 +36,14 @@ export default function ClientEdit({ id }: Props){
     const [camposFaltando, setCamposFaltando] = useState<string[]>([]);
     const router = useRouter();
 
+    const formatDate = (date:any) => {
+      return new Date(date).toLocaleDateString("pt-BR");
+      //tentar converter de outra maneira, pois ao apagar os dados do input, 
+      //o dataV fica como vazio, e talvez por isso não digita
+      //quando deixa só o dataV a data fica desformatada, porem funciona
+      
+  };
+
     useEffect(() => {
       
       const clientId = router.query.id as string;
@@ -46,24 +54,22 @@ export default function ClientEdit({ id }: Props){
       const fetchClientData = async () => {
         try {
           const apiClient = setupAPIClient();
-          const response = await apiClient(`/client/detail/${clientId}`); //(Create route of detail the client)
+          const response = await apiClient(`/client/detail/${clientId}`);
           const clientData = response.data;
-          console.log('Dados do Cliente:', clientData);
   
-          setIdClient(clientData.id);
+          setIdClient(clientId);        
           setName(clientData.name);
           setEmail(clientData.email);
           setCpf(clientData.cpf);
-          setTelefone(clientData.telefone);          
-          setEndereco(clientData.endereco);          
+          setTelefone(clientData.telefone);
+          setEndereco(clientData.endereco);
           setDataV(clientData.dataVencimento);
           setValorMask(clientData.valorPlano);
           setQuantidade(clientData.quantidadeSessoes);
           setTipoPlano(clientData.tipoPlano);
           setPlanoFamiliar(clientData.planoFamiliar);
-          setTipoPacote(clientData.tipoPacote);
+          setTipoPacote(clientData.dataVencimento ? 'Mensal' : 'Sessões');
           setSituacao(clientData.situacao);
-          console.log('Nome e email: ', clientData.quantidadeSessoes, clientData.planoFamiliar, clientData.dataVencimento);
           
         } catch (error) {
           console.log('Erro ao buscar dados do cliente:', error);
@@ -95,8 +101,10 @@ export default function ClientEdit({ id }: Props){
         const formattedValue = formattedValueWithSymbol.substring(2);
 
         setValor(formattedValue); 
-        setValorMask(formattedValueWithSymbol);                   
+        setValorMask(formattedValueWithSymbol);  
+
       };
+      
       console.log(valor);
       
       
@@ -148,7 +156,8 @@ export default function ClientEdit({ id }: Props){
         
         try {
                     
-          const formattedDataVencimento = dataV && DateTime.fromFormat(dataV, 'dd/MM/yyyy').toISO();    
+          const formattedDataVencimento = dataV ? DateTime.fromFormat(dataV, 'dd/MM/yyyy').toISO() : null;
+    
           const data = new FormData();
     
           if (formattedDataVencimento && tipoPacote === 'Mensal') {
@@ -164,15 +173,16 @@ export default function ClientEdit({ id }: Props){
             endereco,
             tipoPlano,
             planoFamiliar,
-            dataVencimento: formattedDataVencimento,
+            dataVencimento: dataV,
             valorPlano: parseFloat(valor),
             quantidadeSessoes: parseInt(quantidade, 10),
             situacao,
           };
-          
-          const clientId = router.query.id as string;
+
           const apiClient = setupAPIClient();
-          const response = await apiClient.put(`/client/update/${clientId}`, requestData);
+          await apiClient.put(`/client/update/${idClient}`, requestData);
+          
+          
   
     
           toast.success('Cliente atualizado com sucesso');
@@ -180,7 +190,7 @@ export default function ClientEdit({ id }: Props){
 
   
          router.push('/clientlist');
-        } catch (error) {
+        } catch (error) {          
           console.log('Erro ao atualizar cliente:', error);
           toast.error('Erro ao atualizar cliente');
         }
@@ -189,9 +199,9 @@ export default function ClientEdit({ id }: Props){
     
         
     }
+  
 
-
-
+    
     return(
         <>
         <Head>
@@ -250,15 +260,17 @@ export default function ClientEdit({ id }: Props){
                             <option value="Familiar">Familiar</option>
                         </select>
 
-                        <select
-                            id="planoFamiliar"
-                            value={planoFamiliar}
-                            onChange={handleTeste}
-                        >
-                            <option value="" disabled hidden>Plano Familiar</option>
-                            <option value="Dependente">Dependente</option>
-                            <option value="Responsavel">Responsável</option>
-                        </select>
+                        {tipoPlano === 'Individual' ? '' : 
+                          <select
+                              id="planoFamiliar"
+                              value={planoFamiliar}
+                              onChange={handleTeste}
+                          >
+                              <option value="" disabled hidden>Plano Familiar</option>
+                              <option value="Dependente">Dependente</option>
+                              <option value="Responsavel">Responsável</option>
+                          </select> 
+                        }
 
                         <select
                             id="tipoPacote"
@@ -271,13 +283,15 @@ export default function ClientEdit({ id }: Props){
                         </select>
                     </div>
 
-                    <InputMask 
-                        mask="99/99/9999" 
-                        placeholder="Data vencimento"
-                        value={dataV}
-                        onChange={(e) => setDataV(e.target.value)}
-                        
-                    />
+                    {tipoPacote === 'Sessões' ? <></> : 
+                      <InputMask 
+                          mask="99/99/9999" 
+                          placeholder="Data vencimento"
+                          value={formatDate(dataV)}
+                          onChange={(e) => setDataV(e.target.value)}
+                          
+                      />
+                    }
                     
 
                     <input
