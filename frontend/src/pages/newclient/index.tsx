@@ -100,12 +100,15 @@ export default function NewClient(){
         
         try {
                     
-          const formattedDataVencimento = dataV && DateTime.fromFormat(dataV, 'dd/MM/yyyy').toISO();    
+          const formattedDataVencimento = selectedDate ? selectedDate.toLocaleDateString('pt-BR') : null;    
           const data = new FormData();
     
           if (formattedDataVencimento && tipoPacote === 'Mensal') {
             data.append('dataVencimento', formattedDataVencimento);
           }
+
+          console.log('register', formattedDataVencimento);
+          
     
           const requestData = {
             name,
@@ -163,6 +166,8 @@ export default function NewClient(){
       console.log('SGCP');
       
     }, [selectedDate]);
+    console.log(selectedDate);
+    
 
     return(
         <>

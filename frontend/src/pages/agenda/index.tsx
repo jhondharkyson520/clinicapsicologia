@@ -173,14 +173,14 @@ export default function Agenda() {
       setSelectedClientId('');
       setSelectedDate(null);
   
-      //console.log("Agendamento bem-sucedido:", response.data);
+      console.log("Agendamento bem-sucedido:", agendamentoData, response.data, 'teste');
       toast.success('Horário marcado com sucesso!');
     } catch (error) {
       //console.error("Erro ao agendar:", error);
       toast.error('Já existe um agendamento para a mesma data e horário.');
       setSelectedTime('');      
       setSelectedClientId('');
-      setSelectedDate(null);
+      
       
     }
   };

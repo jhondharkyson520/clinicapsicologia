@@ -24,14 +24,14 @@ class CreateAgendaService {
       console.log(horaAtual);
 
       if (dataHoraLuxon.toMillis() <= horaAtual.startOf('day').toMillis()) {
-          console.log('Não é possível fazer agendamentos para datas passadas');
-          return;
-      }
-
-      if (dataHoraLuxon.hour * 60 + dataHoraLuxon.minute <= horaAtual.hour * 60 + horaAtual.minute) {
-          console.log('Não é possível fazer agendamentos para horários passados');
-          return;
-      }
+        console.log('Não é possível fazer agendamentos para datas passadas');
+        return;
+    }
+    
+    if (dataHoraLuxon <= horaAtual) {
+        console.log('Não é possível fazer agendamentos para horários passados');
+        return;
+    }
 
       console.log('Agendamento possível');
 

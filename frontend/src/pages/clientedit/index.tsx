@@ -183,6 +183,8 @@ export default function ClientEdit({ id }: Props){
     useEffect(() => {
       setValor(valorMask);
     }, [selectedDate]);
+    console.log(selectedDate);
+    
 
     const { listOpen } = useListOpen();
   

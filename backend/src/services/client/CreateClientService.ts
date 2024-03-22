@@ -1,5 +1,6 @@
 import prismaClient from "../../prisma";
 import { DateTime } from "luxon"; 
+import { parse } from 'date-fns';
 
 interface ClientRequest {
   name: string;
@@ -44,8 +45,9 @@ class CreateClientService {
       throw new Error("Preencha todos os campos!");
     }
 
-    const formattedDataVencimento =
-      dataVencimento;
+    const formattedDataVencimento = dataVencimento
+      ? parse(dataVencimento, 'dd/MM/yyyy', new Date())
+      : null;
 
 
     const client = await prismaClient.clients.create({
