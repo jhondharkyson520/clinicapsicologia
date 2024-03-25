@@ -55,7 +55,7 @@ export default function AgendaList({ clients }: ClientProps) {
             try {
                 const apiClient = setupAPIClient();
                 const response = await apiClient.get('/caixa/atrasados');
-                setAtrasoList(response.data);
+                setAtrasoList(response.data);             
             } catch (error) {
                 //console.error('Erro ao buscar os dados:', error);
                 toast.error('Erro ao carregar Painel');

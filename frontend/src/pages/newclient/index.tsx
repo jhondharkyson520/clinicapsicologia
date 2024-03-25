@@ -28,12 +28,15 @@ export default function NewClient(){
     const [tipoPlano, setTipoPlano] = useState('');
     const [planoFamiliar, setPlanoFamiliar] = useState('');
     const [tipoPacote, setTipoPacote] = useState('');
-    const [situacao, setSituacao] = useState(false);
+    const [situacao, setSituacao] = useState(true);
 
     const [planoFamiliarDisabled, setPlanoFamiliarDisabled] = useState(true);
     const [dataVencimentoDisabled, setDataVencimentoDisabled] = useState(true);
 
     const [camposFaltando, setCamposFaltando] = useState<string[]>([]);
+
+
+  
 
 
     const maskMoney = (value: string) => {
@@ -72,6 +75,10 @@ export default function NewClient(){
         setPlanoFamiliarDisabled(e.target.value !== 'Familiar');
     };
 
+    useEffect(() => {
+      console.log('situacao3:', situacao);
+  }, [situacao]);
+
     async function handleRegister(event: FormEvent) {
         event.preventDefault();
 
@@ -107,9 +114,13 @@ export default function NewClient(){
             data.append('dataVencimento', formattedDataVencimento);
           }
 
-          console.log('register', formattedDataVencimento);
-          
-    
+         // console.log('register', formattedDataVencimento);
+
+         const isBeforeOrEqualToday = selectedDate && selectedDate <= new Date();
+         setSituacao((prevState) => !isBeforeOrEqualToday);
+        
+        
+      
           const requestData = {
             name,
             email,
@@ -121,12 +132,12 @@ export default function NewClient(){
             dataVencimento: formattedDataVencimento,
             valorPlano: parseFloat(valor),
             quantidadeSessoes: parseInt(quantidade, 10),
-            situacao,
+            situacao: situacao,
           };
     
           const apiClient = setupAPIClient();
-          await apiClient.post('/client', requestData);
-          router.push('/newclient');
+          await apiClient.post('/client', requestData);          
+          router.push('/caixa');
     
           toast.success('Cliente cadastrado com sucesso');
         } catch (err) {
@@ -137,6 +148,8 @@ export default function NewClient(){
             toast.error('Erro ao cadastrar');
           }
         }
+
+         
 
         setCamposFaltando([]);
     
@@ -151,6 +164,7 @@ export default function NewClient(){
         setTipoPlano('');
         setPlanoFamiliar('');
         setTipoPacote('');
+        
     }
 
     const { listOpen } = useListOpen();
@@ -167,7 +181,17 @@ export default function NewClient(){
       
     }, [selectedDate]);
     console.log(selectedDate);
+
+    useEffect(() => {
+      console.log(selectedDate);
     
+      const isBeforeOrEqualToday = selectedDate && selectedDate <= new Date();
+      console.log('isBeforeOrEqualToday:', isBeforeOrEqualToday);
+      setSituacao((prevState) => !isBeforeOrEqualToday);
+      console.log('situacao3:', !isBeforeOrEqualToday);
+    }, [selectedDate]);    
+    
+    const currentDate = new Date().toISOString().split('T')[0]; 
 
     return(
         <>
@@ -250,11 +274,12 @@ export default function NewClient(){
                     </div>
 
 
-                    {tipoPacote ===  'Sessões' ? <></> : 
+                    {tipoPacote !==  'Mensal' ? <></> : 
                       
                       <DatePicker
                         selected={selectedDate}
                         onChange={handleDateChange}
+                        minDate={new Date()} 
                         dateFormat="dd/MM/yyyy"
                         placeholderText="Informe a data"
                         showYearDropdown
@@ -268,8 +293,9 @@ export default function NewClient(){
                         open={isDatePickerOpen}
                         locale="ptBR"
                       />
+                      }
                                    
-                    }                  
+                                      
                     
 
                     <input

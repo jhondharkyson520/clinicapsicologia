@@ -30,6 +30,9 @@ class CreateCaixaService {
       ? Decimal.sub(lastCaixa.valorAberto, valorPago).toString()
       : Decimal.sub(client.valorPlano, valorPago).toString();
 
+    
+
+
     const situacao = parseFloat(valorAberto) === 0;
 
     await prismaClient.clients.update({

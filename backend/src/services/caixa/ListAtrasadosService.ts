@@ -19,7 +19,6 @@ class ListAtrasadosService {
         client: true,
       },
     });
-
     //console.log('Todas as entradas do caixa:', caixaEntries);
 
     for (const entry of caixaEntries) {

@@ -191,7 +191,8 @@ export default function Caixa() {
         toast.warning('Preencha todos os campos!');
         return;
       }
-  
+
+    
       const apiClient = setupAPIClient();
   
       await apiClient.post('/lancamento', {

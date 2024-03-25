@@ -60,6 +60,8 @@ class CreateAgendaService {
 
       const novaSessaoContador = (client.sessoesContador || 0) + 1;
 
+      
+
       const agenda = await prismaClient.agenda.create({
         data: {
           dataConsulta: dataHoraLuxon.toISO(),

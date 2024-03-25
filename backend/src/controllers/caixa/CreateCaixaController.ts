@@ -5,6 +5,10 @@ class CreateCaixaController {
   async handle(req: Request, res: Response) {
     const { valorPago, client_id } = req.body;
 
+    if(valorPago === 0){
+      return;
+    }
+
     const createCaixaService = new CreateCaixaService();
 
     const caixa = await createCaixaService.execute({
