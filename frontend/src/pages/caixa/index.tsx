@@ -64,11 +64,6 @@ export default function Caixa() {
       if (latestCaixa) {
         let valorAberto = parseFloat(latestCaixa.valorAberto);
   
-        if (valorAberto > 0) {
-          valorAberto *= -1;
-        } else if (valorAberto < 0) {
-          valorAberto *= -1;
-        }
         
         setValorEmAberto(`R$ ${valorAberto.toFixed(2)}`);       
             
@@ -248,7 +243,7 @@ export default function Caixa() {
   return (
     <>
       <Head>
-        <title>Caixa - SGCP</title>
+        <title>Caixa - ConsultEasy</title>
       </Head>
       <div>
         <Header />

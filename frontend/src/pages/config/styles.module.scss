@@ -77,15 +77,15 @@
   border-radius: 0.3rem;
   height: 40px;
   border: 0;
-  background-color: var(--red-900);
+  background-color: var(--blue-700);
   font-size: 1.2rem;
   font-weight: bold;
   color: var(--white);
   transition: 0.7s;
 
   &:hover{
-    transform: scale(1.05);
-    background-color: var(--red-1000);
+    transform: scale(1.05);    
+    background-color: var(--blue-900);
   }
 }
 

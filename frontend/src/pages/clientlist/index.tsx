@@ -63,6 +63,20 @@ export default function ClientList({ clients }: ClientProps) {
 
       };
 
+      useEffect(() => {
+        async function fetchData() {
+            try {
+                const apiClient = setupAPIClient();
+                const response = await apiClient.get('/clientlist');
+                setClientList(response.data);
+            } catch (error) {
+                console.error("Erro ao obter clientes:", error);
+            }
+        }
+
+        fetchData();
+    }, []);
+
      
       
 
@@ -177,14 +191,20 @@ export default function ClientList({ clients }: ClientProps) {
 }
 
 export const getServerSideProps = canSSRAuth(async (ctx) => {
-
-    const apiClient = setupAPIClient(ctx);
-    const response = await apiClient.get('/clientlist');
-
-    return {
-        props: {
-            clients: response.data
-        }
-    };
+    try {
+        const apiClient = setupAPIClient(ctx);
+        const response = await apiClient.get('/clientlist');
+        return {
+            props: {
+                clients: response.data
+            }
+        };
+    } catch (error) {
+        console.error("Erro ao obter clientes no servidor:", error);
+        return {
+            props: {
+                clients: []
+            }
+        };
+    }
 });
-

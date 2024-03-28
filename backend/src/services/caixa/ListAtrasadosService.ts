@@ -33,7 +33,7 @@ class ListAtrasadosService {
       }
     }
 
-    const filteredEntries = Object.values(uniqueClients).filter(entry => entry.valorAberto > 0);
+    const filteredEntries = Object.values(uniqueClients).filter(entry => entry.valorAberto < 0);
 
     const results = filteredEntries.map(entry => ({
       id: entry.id,

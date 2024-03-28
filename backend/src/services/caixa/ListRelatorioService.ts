@@ -12,8 +12,10 @@ class ListRelatorioService{
               dataOperacao: true,
               valorPlano: true,
               valorAberto: true,
+              valorPago: true,
               client:{
                 select:{
+                  id: true,
                   name: true,
                 }
               }

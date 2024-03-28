@@ -26,14 +26,19 @@ class CreateCaixaService {
     });
 
     const valorPlano = client.valorPlano.toString();
-    const valorAberto = lastCaixa
-      ? Decimal.sub(lastCaixa.valorAberto, valorPago).toString()
-      : Decimal.sub(client.valorPlano, valorPago).toString();
 
     
 
+    const valorAberto = Decimal.add(lastCaixa.valorAberto, valorPago).toString();
 
-    const situacao = parseFloat(valorAberto) === 0;
+   
+    const situacao = undefined;
+
+    if(parseFloat(valorAberto) >= 0){
+      situacao === true;
+    } else {
+      situacao === false;
+    }
 
     await prismaClient.clients.update({
       where: { id: client_id },
@@ -48,6 +53,7 @@ class CreateCaixaService {
         client_id: client_id,
         valorPlano: valorPlano,
         valorAberto: valorAberto,
+        valorPago: valorPago
       },
     });
 
