@@ -28,7 +28,7 @@ class CreateAgendaService {
         return;
     }
     
-    if (dataHoraLuxon <= horaAtual) {
+    if (dataHoraLuxon.toISO() <= horaAtual.toISO()) {
         console.log('Não é possível fazer agendamentos para horários passados');
         return;
     }

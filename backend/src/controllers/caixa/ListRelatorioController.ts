@@ -71,6 +71,8 @@ class ListRelatorioController {
 
     });
 
+    
+
   
     const response: RelatorioResponse = {
       faturamentoMensal: faturamentoMensalTemp,

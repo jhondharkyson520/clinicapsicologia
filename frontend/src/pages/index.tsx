@@ -44,7 +44,7 @@ export default function Home() {
 
     <>
     <Head>
-      <title>Clínica de Psicólogos - Faça seu login</title>
+      <title>ConsultEasy - Faça seu login</title>
     </Head>
     <div className={styles.containerCenter}>
       <Image src={logoImg} alt="Logo clínica de psicólogos"/>

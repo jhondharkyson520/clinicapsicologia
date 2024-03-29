@@ -19,6 +19,7 @@ class ListClientService {
         });
 
         const caixa = await prismaClient.caixa.findMany();
+    
 
         const today = new Date(); 
         const dayOfMonth = today.getDate(); 
@@ -42,6 +43,7 @@ class ListClientService {
                     });
                 }
 
+
                 const valorAberto = client.valorPlano;
 
                 await prismaClient.caixa.create({
@@ -53,7 +55,24 @@ class ListClientService {
                       valorPago: 0
                     },
                   });
-            } else {                
+
+                  
+                  
+
+            } else if(client.sessoesContador >= client.quantidadeSessoes){
+                const valorAberto = client.valorPlano;        
+                await prismaClient.caixa.create({
+                    data: {
+                      dataOperacao: new Date(),
+                      client_id: client.id,
+                      valorPlano: client.valorPlano,
+                      valorAberto: -valorAberto,
+                      valorPago: 0
+                    },
+                  });
+                  
+               
+               
                 //console.log(`Cliente ${client.id} possui registro no caixa.`);
                 continue;
             }

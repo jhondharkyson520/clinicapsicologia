@@ -220,7 +220,7 @@ export default function Agenda() {
     <>
     
       <Head>
-        <title>Clientes cadastrados - SGCP</title>
+        <title>Agenda - ConsultEasy</title>
       </Head>
       
       <div>

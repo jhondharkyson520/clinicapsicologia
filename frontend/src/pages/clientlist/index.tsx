@@ -83,7 +83,7 @@ export default function ClientList({ clients }: ClientProps) {
     return (
         <>
             <Head>
-                <title>Clientes cadastrados - SGCP</title>
+                <title>Clientes cadastrados - ConsultEasy</title>
             </Head>
             <div>
                 <Header />

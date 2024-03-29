@@ -124,7 +124,7 @@ export default function Config() {
   return (
     <>
       <Head>
-        <title>Configurações - SGCP</title>
+        <title>Configurações - ConsultEasy</title>
       </Head>
       <div>
         <Header />

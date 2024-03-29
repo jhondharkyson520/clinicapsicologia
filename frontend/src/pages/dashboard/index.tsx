@@ -37,6 +37,7 @@ interface RelatorioResponse {
     client: {
         id: string;
         name: string;
+        situacao: boolean
     };
     valorAberto: number;
 }
@@ -155,10 +156,12 @@ export default function AgendaList({ clients }: ClientProps) {
       useEffect(() => {
     }, [formattedCurrentDateTime]);
 
+   // const colors = ['#06cf9d', '#24ffc8a2']; style={{ backgroundColor: colors[index % colors.length] }}
+
     return (
         <>
             <Head>
-                <title>Próximas sessões - SGCP</title>
+                <title>Próximas sessões - ConsultEasy</title>
             </Head>
             <div>
                 <Header />
@@ -184,10 +187,10 @@ export default function AgendaList({ clients }: ClientProps) {
                         </thead>
                         <tbody>
                             {clientList
-                                    .map((client) => (
+                                    .map((client, index) => (
                                     <tr key={client.id}  className={styles.orderClient}>
                                         <td className={styles.tagCell}>
-                                            <div className={styles.tag}></div>
+                                            <div className={styles.tag} ></div>
                                         </td>
                                         <td className={`${styles.tableCell} ${styles.nameCell}`}>
                                             {client.name.length > 10 ? `${client.name.slice(0, 10)}...` : client.name}

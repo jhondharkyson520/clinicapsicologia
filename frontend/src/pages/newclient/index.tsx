@@ -107,19 +107,16 @@ export default function NewClient(){
         
         try {
                     
-          const formattedDataVencimento = selectedDate ? selectedDate.toLocaleDateString('pt-BR') : null;    
-          const data = new FormData();
-    
-          if (formattedDataVencimento && tipoPacote === 'Mensal') {
-            data.append('dataVencimento', formattedDataVencimento);
+          let situacaoPacote = true;
+          if (tipoPacote === 'Mensal') {
+              const isBeforeOrEqualToday = selectedDate && selectedDate <= new Date();
+              situacaoPacote = !isBeforeOrEqualToday;
           }
 
-         // console.log('register', formattedDataVencimento);
+          // Formatar a data de vencimento para enviar ao servidor
+          const formattedDataVencimento = tipoPacote === 'Mensal' ? (selectedDate ? selectedDate.toLocaleDateString('pt-BR') : null) : null;
 
-         const isBeforeOrEqualToday = selectedDate && selectedDate <= new Date();
-         setSituacao((prevState) => !isBeforeOrEqualToday);
-        
-        
+
       
           const requestData = {
             name,
@@ -132,7 +129,7 @@ export default function NewClient(){
             dataVencimento: formattedDataVencimento,
             valorPlano: parseFloat(valor),
             quantidadeSessoes: parseInt(quantidade, 10),
-            situacao: situacao,
+            situacao: situacaoPacote,
           };
     
           const apiClient = setupAPIClient();
@@ -177,7 +174,7 @@ export default function NewClient(){
     };
 
     useEffect(() => {
-      console.log('SGCP');
+      console.log('ConsultEasy');
       
     }, [selectedDate]);
     console.log(selectedDate);
@@ -196,7 +193,7 @@ export default function NewClient(){
     return(
         <>
         <Head>
-            <title>Novo Cliente - SGCP</title>
+            <title>Novo Cliente - ConsultEasy</title>
         </Head>
         <div>
             <Header/>

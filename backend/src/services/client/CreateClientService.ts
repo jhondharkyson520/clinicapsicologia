@@ -74,7 +74,7 @@ class CreateClientService {
       },
     });
 
-    console.log('dataVencimento:', formattedDataVencimento);
+    //console.log('dataVencimento:', formattedDataVencimento);
 
     return client;
   }

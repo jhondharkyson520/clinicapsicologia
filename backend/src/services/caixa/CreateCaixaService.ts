@@ -57,6 +57,22 @@ class CreateCaixaService {
       },
     });
 
+ 
+
+           
+    if(client.sessoesContador >= client.quantidadeSessoes){
+
+     
+      await prismaClient.clients.update({
+        where: { id: client.id },
+        data: {
+          sessoesContador: 0,
+          situacao: true
+        }
+      })
+
+    } 
+       
     return caixa;
   }
 }

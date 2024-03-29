@@ -16,8 +16,6 @@ class UpdateClientController {
         quantidadeSessoes,
         situacao} = req.body
 
-        console.log('Id do cliente ', id);
-        
   
       const updateClientService = new UpdateClientService();
   

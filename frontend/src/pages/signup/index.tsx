@@ -48,7 +48,7 @@ export default function Signup() {
 
     <>
     <Head>
-      <title>Clínica de Psicólogos - Faça seu cadastro</title>
+      <title>ConsultEasy - Faça seu cadastro</title>
     </Head>
     <div className={styles.containerCenter}>
 

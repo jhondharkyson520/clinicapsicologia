@@ -26,7 +26,7 @@ class DetailClientService {
             }
         });
 
-        console.log(id);
+        //console.log(id);
 
         return client;
     }
