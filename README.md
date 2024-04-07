@@ -1,4 +1,4 @@
-# Sistema de Gerenciamento de Clínicas de Psicólogos **💻**
+# ConsultEasy **💻**
 ## **🚀 Tecnologias**
 Este repositório apresenta as seguintes tecnologias:
 - ReactJS
@@ -18,8 +18,9 @@ Desenvolvi este projeto com o objetivo de criar uma plataforma intuitiva e respo
 
 Estou sempre em busca de desafios que me permitam aprimorar minhas habilidades e contribuir para a comunidade de desenvolvimento web. 🚀
 ### **📷 Tela Inicial:**
-![SGCP.png](https://jhondharkyson.com/assets/SGCP-dbdc370d.png)
+![SGCP.png](https://jhondharkyson.com/assets/SGCP-6d5aa31f.png)
 
 ### **📷 Diagrama Relacional:**
 ![SGCP.png](https://i.ibb.co/Jj6vGTy/Diagrama-Relacional.png)
+
 Se tiver alguma sugestão ou feedback, ficarei feliz em ouvir! Entre em contato. 📬

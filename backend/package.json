@@ -4,8 +4,9 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "start": "node server.ts",
-    "dev": "ts-node-dev src/server.ts"
+    "start": "node src/server.js",
+    "dev": "ts-node-dev src/server.ts",
+    "build": "tsc"  
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
