@@ -3,6 +3,7 @@ import 'express-async-errors'
 import cors from 'cors'
 
 import { router } from './routes';
+//teste
 
 
 
